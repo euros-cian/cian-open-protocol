@@ -144,7 +144,9 @@ CIAN_TEST_DATABASE_URL=postgres://... npm run test:postgres
 ```
 
 The test truncates protocol tables in the supplied database. Never point it at a
-production database.
+production database. For Neon, use `sslmode=verify-full` in the connection string
+to require certificate and hostname verification and avoid the transitional `pg`
+SSL-mode warning.
 
 ## Scope boundaries
 

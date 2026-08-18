@@ -8,9 +8,6 @@ CREATE TABLE IF NOT EXISTS protocol_attestations (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS protocol_language_proofs_one_interaction
-  ON protocol_language_proofs (interaction_id, recipient_agent_id, language_profile);
-
 CREATE TABLE IF NOT EXISTS protocol_language_proofs (
   proof_id text PRIMARY KEY,
   interaction_id text NOT NULL,
@@ -22,6 +19,9 @@ CREATE TABLE IF NOT EXISTS protocol_language_proofs (
   epoch_id text,
   created_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS protocol_language_proofs_one_interaction
+  ON protocol_language_proofs (interaction_id, recipient_agent_id, language_profile);
 
 CREATE TABLE IF NOT EXISTS protocol_epochs (
   epoch_id text PRIMARY KEY,
