@@ -34,7 +34,7 @@ export class ConversationalProtocolAgent {
     history.push({ role: "user", content: text }, { role: "assistant", content: modelResult.text });
     this.sessions.set(sessionId, history);
 
-    const validation = this.validator.validate({
+    const validation = await this.validator.validate({
       interaction: received.interaction,
       originAttestation: received.attestation,
       rewardEvidence: {

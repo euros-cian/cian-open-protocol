@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.8 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.9 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -165,6 +165,25 @@ The issuer can delete expired and withdrawn session metadata with
 `POST /v0.1/admin/retention`. This deliberately does not delete independently
 signed protocol proofs or settlement records, whose separate governance and
 retention rules must preserve audit integrity. See [Milestone 7](docs/milestone-7.md).
+
+## Independent validator
+
+Milestone 8 can run Welsh validation as a separate authenticated service. The
+validator verifies the gateway's signed origin attestation and recomputes the
+clear-text digest before issuing its own signed attestation. It returns evidence,
+never the clear interaction text. The proof controller pins the validator public
+key and rejects tampered or untrusted attestations.
+
+```text
+npm run setup:validator-trust
+npm run demo:validator
+npm run demo:pilot-api
+```
+
+Set `CIAN_VALIDATOR_URL=http://127.0.0.1:8791` and the same strong
+`CIAN_VALIDATOR_API_TOKEN` in the validator and pilot API processes to enable the
+remote mode. Use a separate `CIAN_VALIDATOR_KEY_PASSPHRASE` for the validator's
+encrypted identity. See [Milestone 8](docs/milestone-8.md).
 
 ## Local registry API
 

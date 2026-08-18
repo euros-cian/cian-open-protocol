@@ -22,3 +22,5 @@ export { ConversationalProtocolAgent, DEFAULT_INSTRUCTIONS } from "./conversatio
 export { PilotSessionManager } from "./pilot-session.js";
 export { createConversationServer } from "./conversation-server.js";
 export { PostgresPilotSessionStore } from "./postgres-pilot-session.js";
+export { RemoteWelshValidator } from "./remote-validator.js";
+export { createValidatorServer } from "./validator-server.js";

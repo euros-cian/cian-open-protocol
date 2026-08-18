@@ -1,9 +1,9 @@
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
   AgentClient, ConversationalProtocolAgent, InteractionGateway, LanguageProofController,
   OpenAIResponsesProvider, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry,
-  WelshValidator, createConversationServer, createSigningService
+  RemoteWelshValidator, WelshValidator, createConversationServer, createSigningService
 } from "../src/index.js";
 
 const required = ["OPENAI_API_KEY", "CIAN_DATABASE_URL", "CIAN_PILOT_KEY_PASSPHRASE", "CIAN_SESSION_ISSUER_TOKEN"];
@@ -22,7 +22,12 @@ if (missing.length) {
     connectionString: process.env.CIAN_DATABASE_URL, registryId: "registry:cy:pilot"
   });
   const gatewaySigner = signingService("gateway:cy:pilot", "gateway");
-  const validatorSigner = signingService("validator:cy:pilot", "validator");
+  const independentValidator = Boolean(process.env.CIAN_VALIDATOR_URL);
+  const validatorSigner = independentValidator ? null : signingService("validator:cy:pilot", "validator");
+  const validatorPublicKey = independentValidator
+    ? readFileSync(join(secretsDirectory, "validator-public.pem"), "utf8")
+    : validatorSigner.publicKeyPem;
+  const validatorKeyId = independentValidator ? "validator:cy:independent#key-1" : validatorSigner.keyId;
   const proofSigner = signingService("proof-controller:cy:pilot", "proof-controller");
   const identity = AgentClient.createPersistent({
     credentialsPath: credential("agent"), passphrase: process.env.CIAN_PILOT_KEY_PASSPHRASE,
@@ -36,11 +41,13 @@ if (missing.length) {
       apiKey: process.env.OPENAI_API_KEY, model: process.env.OPENAI_MODEL ?? "gpt-5.6-luna"
     }),
     gateway: new InteractionGateway({ signer: gatewaySigner }),
-    validator: new WelshValidator({ signer: validatorSigner }),
+    validator: independentValidator
+      ? new RemoteWelshValidator({ url: process.env.CIAN_VALIDATOR_URL, apiToken: process.env.CIAN_VALIDATOR_API_TOKEN })
+      : new WelshValidator({ signer: validatorSigner }),
     proofController: new LanguageProofController({
       signer: proofSigner,
       trustedGateways: [[gatewaySigner.keyId, gatewaySigner.publicKeyPem]],
-      trustedValidators: [[validatorSigner.keyId, validatorSigner.publicKeyPem]]
+      trustedValidators: [[validatorKeyId, validatorPublicKey]]
     }),
     proofStore: new PostgresProofStore({ pool: registry.pool })
   });
@@ -54,6 +61,7 @@ if (missing.length) {
   });
   console.log(`Cian pilot API listening at ${address}`);
   console.log(`Persistent agent: ${identity.agentId}`);
+  console.log(`Validator mode: ${independentValidator ? "independent remote service" : "in-process alpha fallback"}`);
   console.log("Press Ctrl+C to stop. Use TLS termination before exposing this service to a network.");
 
   const close = async () => {
