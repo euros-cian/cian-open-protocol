@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.2 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.3 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -38,8 +38,9 @@ npm run demo
 ```
 
 The implementation uses integer quantities, Ed25519 signatures, deterministic
-JSON canonicalisation, in-memory transactional state and injectable clocks. It is
-for interoperability and demonstration, not production custody. `npm run demo`
+JSON canonicalisation, an in-memory demonstration registry or durable PostgreSQL
+state, and injectable clocks. It is for interoperability and demonstration, not
+production custody. `npm run demo`
 starts an ephemeral local registry, registers two cryptographic agent identities,
 allocates test `TB`, transfers it, redeems it and permanently retires it.
 
@@ -50,6 +51,7 @@ import { AgentClient, digest } from "./src/index.js";
 
 const agent = AgentClient.create({
   registryUrl: "http://127.0.0.1:8787",
+  registryPublicKeyPem: process.env.CIAN_REGISTRY_PUBLIC_KEY,
   endpoint: "https://agent.example",
   capabilities: ["research"],
   languageProfiles: ["cy-v0.1"]
@@ -72,8 +74,11 @@ const redemption = await agent.redeem({
 
 The SDK creates a persistent identifier from an Ed25519 public key, signs its
 manifest and signs every state-changing agent request. Applications are
-responsible for storing the exported private key securely; the demo keeps keys in
-memory only.
+responsible for storing the private key securely. `AgentClient.createPersistent`
+stores credentials using scrypt and AES-256-GCM; the demo keeps keys in memory only.
+Production clients must pin the registry public key. Omitting it accepts the key
+advertised by the registry and is suitable only for local demonstration or a
+separately authenticated trust-on-first-use bootstrap.
 
 ## Local registry API
 
@@ -92,6 +97,45 @@ GET  /v0.1/audit
 
 Test allocation and execution verification use admin-token-protected local routes.
 They are demonstration controls, not a production issuer or compute-provider API.
+
+## Durable PostgreSQL registry
+
+`PostgresSettlementRegistry` stores agents, balances, sequences, consumed proofs,
+request IDs, nonces, transfers, redemption locks, retirements and audit events in
+PostgreSQL. Transfer and redemption paths use database transactions and row locks.
+
+```js
+import { PostgresSettlementRegistry, createRegistryServer } from "./src/index.js";
+
+const registry = await PostgresSettlementRegistry.connect({
+  connectionString: process.env.DATABASE_URL,
+  registryId: "registry:cy:01"
+});
+
+const service = createRegistryServer({
+  registry,
+  registryId: "registry:cy:01",
+  adminToken: process.env.CIAN_ADMIN_TOKEN,
+  registryCredentialsPath: "./secrets/registry.credentials.json",
+  registryPassphrase: process.env.CIAN_REGISTRY_KEY_PASSPHRASE
+});
+
+console.log(await service.listen({ port: 8787 }));
+```
+
+The schema migration is applied automatically from
+[`database/001-durable-registry.sql`](database/001-durable-registry.sql). Registry
+credentials must be stored outside source control and backed up securely.
+
+To run the restart and concurrent-spend integration test against a disposable
+PostgreSQL database:
+
+```sh
+CIAN_TEST_DATABASE_URL=postgres://... npm run test:postgres
+```
+
+The test truncates protocol tables in the supplied database. Never point it at a
+production database.
 
 ## Scope boundaries
 

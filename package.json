@@ -1,14 +1,20 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
   "private": true,
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "node --test",
+    "test:postgres": "node --test test/postgres.integration.test.js",
     "check": "node --test",
     "demo": "node examples/two-agent-demo.mjs"
+  },
+  "dependencies": {
+    "pg": "8.16.3"
   },
   "license": "Apache-2.0"
 }

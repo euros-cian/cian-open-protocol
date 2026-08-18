@@ -7,3 +7,6 @@ export { recognisedCapacity, epochBudget, allocateProRata } from "./allocation.j
 export { SettlementRegistry } from "./registry.js";
 export { AgentClient } from "./sdk.js";
 export { createRegistryServer } from "./server.js";
+export { credentialsExist, decryptCredentials, encryptCredentials, loadCredentials, saveCredentials } from "./credentials.js";
+export { createRegistrySigner } from "./registry-signer.js";
+export { PostgresSettlementRegistry } from "./postgres-registry.js";
