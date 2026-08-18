@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/redemption-request.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "redemption_id", "holder_agent", "series_id", "amount", "sender_sequence", "nonce", "workload_digest", "resource_classes", "expires_at", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "redemption_id": { "type": "string", "minLength": 1 },
+    "holder_agent": { "type": "string", "minLength": 1 },
+    "series_id": { "type": "string", "minLength": 1 },
+    "amount": { "type": "integer", "minimum": 1 },
+    "sender_sequence": { "type": "integer", "minimum": 0 },
+    "nonce": { "type": "string", "minLength": 16 },
+    "workload_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "resource_classes": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

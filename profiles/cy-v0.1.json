@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "profile_id": "cy-v0.1",
+  "language": { "tag": "cy", "name": "Cymraeg / Welsh" },
+  "status": "experimental",
+  "minimum_human_origin_assurance": "H1",
+  "decision_outputs": ["QUALIFIES", "DOES_NOT_QUALIFY"],
+  "mixed_language": "qualify only when substantive Welsh is present",
+  "learner_language": "supported; errors and code-switching do not alone disqualify",
+  "positive_evidence": {
+    "digraph_letters": ["ch", "dd", "ff", "ng", "ll", "ph", "rh", "th"],
+    "mutation_clusters": ["ngh", "mh", "nh"],
+    "circumflex_vowels": ["â", "ê", "î", "ô", "û", "ŵ", "ŷ"]
+  },
+  "evidence_rule": "Orthographic signals must be combined with lexical, grammatical and contextual evidence; no single signal is decisive.",
+  "reward_states": [
+    { "id": "welsh_use", "weight": 1 },
+    { "id": "supported_continuation", "weight": 2 },
+    { "id": "useful_task_completed", "weight": 3 },
+    { "id": "language_gain", "weight": 4 }
+  ],
+  "aggregation": "highest_state_only_per_task_or_session",
+  "entitlement": { "display_symbol": "ˆ", "unit_code": "TB" }
+}

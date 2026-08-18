@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/agent-manifest.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "agent_id", "public_key", "endpoint", "capabilities", "language_profiles", "assurance_level", "issued_at", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "agent_id": { "type": "string", "minLength": 1 },
+    "public_key": { "type": "string", "minLength": 1 },
+    "endpoint": { "type": "string", "format": "uri" },
+    "capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "language_profiles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "assurance_level": { "enum": ["A0", "A1", "A2", "A3"] },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

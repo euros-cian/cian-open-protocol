@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/validation-attestation.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "attestation_id", "interaction_id", "recipient_agent_id", "language_profile", "decision", "reward_state", "validator_id", "issued_at", "expires_at", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "attestation_id": { "type": "string", "minLength": 1 },
+    "interaction_id": { "type": "string", "minLength": 1 },
+    "recipient_agent_id": { "type": "string", "minLength": 1 },
+    "language_profile": { "type": "string", "minLength": 1 },
+    "decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY"] },
+    "reward_state": { "type": "string", "minLength": 1 },
+    "validator_id": { "type": "string", "minLength": 1 },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

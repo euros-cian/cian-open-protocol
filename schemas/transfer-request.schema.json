@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/transfer-request.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "transfer_id", "series_id", "from_agent", "to_agent", "amount", "sender_sequence", "nonce", "expires_at", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "transfer_id": { "type": "string", "minLength": 1 },
+    "series_id": { "type": "string", "minLength": 1 },
+    "from_agent": { "type": "string", "minLength": 1 },
+    "to_agent": { "type": "string", "minLength": 1 },
+    "amount": { "$ref": "common.schema.json#/$defs/amount" },
+    "sender_sequence": { "$ref": "common.schema.json#/$defs/sequence" },
+    "nonce": { "type": "string", "minLength": 16 },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "task_id": { "type": "string" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

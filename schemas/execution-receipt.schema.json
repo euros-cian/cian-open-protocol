@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/execution-receipt.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "receipt_id", "redemption_id", "job_id", "holder_agent", "provider_id", "resource_class", "metered_quantity", "result_digest", "started_at", "completed_at", "status", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "receipt_id": { "type": "string", "minLength": 1 },
+    "redemption_id": { "type": "string", "minLength": 1 },
+    "job_id": { "type": "string", "minLength": 1 },
+    "holder_agent": { "type": "string", "minLength": 1 },
+    "provider_id": { "type": "string", "minLength": 1 },
+    "resource_class": { "type": "string", "minLength": 1 },
+    "metered_quantity": { "type": "integer", "minimum": 1 },
+    "result_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "status": { "const": "verified" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

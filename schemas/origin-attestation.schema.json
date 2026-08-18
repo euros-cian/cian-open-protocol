@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/origin-attestation.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "attestation_id", "interaction_id", "recipient_agent_id", "interaction_digest", "human_origin_assurance", "nonce", "observed_at", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "attestation_id": { "type": "string", "minLength": 1 },
+    "interaction_id": { "type": "string", "minLength": 1 },
+    "recipient_agent_id": { "type": "string", "minLength": 1 },
+    "interaction_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "human_origin_assurance": { "enum": ["H0", "H1", "H2", "H3"] },
+    "nonce": { "type": "string", "minLength": 16 },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

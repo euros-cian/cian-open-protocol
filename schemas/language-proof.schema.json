@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/language-proof.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "proof_id", "interaction_id", "recipient_agent_id", "language_profile", "human_origin_assurance", "reward_state", "weight", "interaction_digest", "validator_attestations", "issued_at", "status"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "proof_id": { "type": "string", "minLength": 1 },
+    "interaction_id": { "type": "string", "minLength": 1 },
+    "recipient_agent_id": { "type": "string", "minLength": 1 },
+    "language_profile": { "type": "string", "minLength": 1 },
+    "human_origin_assurance": { "enum": ["H0", "H1", "H2", "H3"] },
+    "decision": { "const": "QUALIFIES" },
+    "reward_state": { "type": "string", "minLength": 1 },
+    "weight": { "type": "integer", "minimum": 1 },
+    "interaction_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "validator_attestations": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["unconsumed", "consumed"] }
+  },
+  "additionalProperties": false
+}

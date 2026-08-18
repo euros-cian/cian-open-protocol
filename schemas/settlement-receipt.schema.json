@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/settlement-receipt.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "settlement_id", "transfer_id", "registry_id", "series_id", "from_agent", "to_agent", "amount", "accepted_sender_sequence", "next_sender_sequence", "committed_at", "status"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "settlement_id": { "type": "string", "minLength": 1 },
+    "transfer_id": { "type": "string", "minLength": 1 },
+    "registry_id": { "type": "string", "minLength": 1 },
+    "series_id": { "type": "string", "minLength": 1 },
+    "from_agent": { "type": "string", "minLength": 1 },
+    "to_agent": { "type": "string", "minLength": 1 },
+    "amount": { "type": "integer", "minimum": 1 },
+    "accepted_sender_sequence": { "type": "integer", "minimum": 0 },
+    "next_sender_sequence": { "type": "integer", "minimum": 1 },
+    "committed_at": { "type": "string", "format": "date-time" },
+    "status": { "const": "final" }
+  },
+  "additionalProperties": false
+}
