@@ -1,0 +1,12 @@
+{"case_id":"cy-seed-001","text":"Helo, sut wyt ti heddiw?","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}
+{"case_id":"cy-seed-002","text":"Bore da, hoffwn wneud y gwaith yn Gymraeg.","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}
+{"case_id":"cy-seed-003","text":"Diolch, gallwn ni barhau gyda'r dasg hon.","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}
+{"case_id":"cy-seed-004","text":"Dw i eisiau siarad Cymraeg please.","expected_decision":"QUALIFIES","category":"mixed_language","review_status":"unreviewed"}
+{"case_id":"cy-seed-005","text":"Helo I am learning Cymraeg and need help.","expected_decision":"QUALIFIES","category":"learner_language","review_status":"unreviewed"}
+{"case_id":"cy-seed-006","text":"Please help me finish this task today.","expected_decision":"DOES_NOT_QUALIFY","category":"english","review_status":"unreviewed"}
+{"case_id":"cy-seed-007","text":"I visited Cymru and bought a map.","expected_decision":"DOES_NOT_QUALIFY","category":"named_entity","review_status":"unreviewed"}
+{"case_id":"cy-seed-008","text":"The letters ll and dd appear here.","expected_decision":"DOES_NOT_QUALIFY","category":"orthographic_trap","review_status":"unreviewed"}
+{"case_id":"cy-seed-009","text":"Helo.","expected_decision":"DOES_NOT_QUALIFY","category":"too_short","review_status":"unreviewed"}
+{"case_id":"cy-seed-010","text":"Cymraeg language lesson please.","expected_decision":"DOES_NOT_QUALIFY","category":"insufficient_welsh","review_status":"unreviewed"}
+{"case_id":"cy-seed-011","text":"Nos da a diolch yn fawr.","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}
+{"case_id":"cy-seed-012","text":"Mae pobl Cymru yn defnyddio'r iaith Gymraeg.","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}

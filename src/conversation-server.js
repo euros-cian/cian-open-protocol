@@ -1,6 +1,7 @@
 // Copyright 2026 Cian AI Ltd. Licensed under Apache-2.0.
 import { createServer } from "node:http";
 import { PilotSessionManager } from "./pilot-session.js";
+import { InMemoryAppealStore } from "./appeal-store.js";
 
 const MAX_BODY_BYTES = 32_768;
 
@@ -29,7 +30,7 @@ function send(response, status, body) {
   response.end(JSON.stringify(body));
 }
 
-export function createConversationServer({ agent, sessionIssuerToken, sessions = new PilotSessionManager() } = {}) {
+export function createConversationServer({ agent, sessionIssuerToken, sessions = new PilotSessionManager(), appeals = new InMemoryAppealStore() } = {}) {
   if (!agent?.handle) throw new Error("conversational agent is required");
   if (!sessionIssuerToken) throw new Error("session issuer token is required");
   const server = createServer(async (request, response) => {
@@ -56,6 +57,7 @@ export function createConversationServer({ agent, sessionIssuerToken, sessions =
           protocol_version: "0.1", session_id: session.sessionId,
           response: result.response,
           protocol: {
+            interaction_id: result.origin_attestation.interaction_id,
             decision: result.validation.decision, reward_state: result.validation.reward_state,
             proof_id: result.proof?.proof_id ?? null
           }
@@ -63,6 +65,16 @@ export function createConversationServer({ agent, sessionIssuerToken, sessions =
       }
       if (request.method === "DELETE" && url.pathname === "/v0.1/sessions/current") {
         return send(response, 200, await sessions.withdraw(bearer(request)));
+      }
+      if (request.method === "POST" && url.pathname === "/v0.1/appeals") {
+        const session = await sessions.authorise(bearer(request));
+        return send(response, 201, await appeals.create({ sessionId: session.sessionId, input: await readJson(request) }));
+      }
+      if (request.method === "GET" && url.pathname.startsWith("/v0.1/appeals/")) {
+        const session = await sessions.authorise(bearer(request));
+        const appealId = decodeURIComponent(url.pathname.slice("/v0.1/appeals/".length));
+        const appeal = await appeals.get({ appealId, sessionId: session.sessionId });
+        return appeal ? send(response, 200, appeal) : send(response, 404, { error: "appeal not found", code: "NOT_FOUND" });
       }
       if (request.method === "POST" && url.pathname === "/v0.1/admin/retention") {
         if (bearer(request) !== sessionIssuerToken) throw Object.assign(new Error("session issuer authorisation required"), { status: 401 });
@@ -76,7 +88,7 @@ export function createConversationServer({ agent, sessionIssuerToken, sessions =
     }
   });
   return {
-    server, sessions,
+    server, sessions, appeals,
     async listen({ host = "127.0.0.1", port = 0 } = {}) {
       await new Promise((resolve, reject) => {
         server.once("error", reject);

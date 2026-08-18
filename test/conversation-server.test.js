@@ -9,6 +9,7 @@ test("conversation API requires issuer authentication, consent and a session tok
       calls.push(input);
       return {
         response: { text: "Shwmae!", provider: "mock", model: "test" },
+        origin_attestation: { interaction_id: "interaction:test" },
         validation: { decision: "QUALIFIES", reward_state: "welsh_use" },
         proof: { proof_id: "proof:test" }
       };
@@ -44,8 +45,23 @@ test("conversation API requires issuer authentication, consent and a session tok
   assert.equal(response.status, 200);
   const result = await response.json();
   assert.equal(result.protocol.proof_id, "proof:test");
+  assert.equal(result.protocol.interaction_id, "interaction:test");
   assert.equal(calls[0].text, "Bore da");
   assert.equal(calls[0].sessionId, session.session_id);
+
+  response = await fetch(`${url}/v0.1/appeals`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${session.token}` },
+    body: JSON.stringify({ interaction_id: "interaction:test", proof_id: "proof:test", disputed_decision: "QUALIFIES", reason_code: "false_positive" })
+  });
+  assert.equal(response.status, 201);
+  const appeal = await response.json();
+  assert.equal(appeal.status, "open");
+  assert.equal("text" in appeal, false);
+
+  response = await fetch(`${url}/v0.1/appeals/${encodeURIComponent(appeal.appeal_id)}`, {
+    headers: { authorization: `Bearer ${session.token}` }
+  });
+  assert.equal(response.status, 200);
 
   response = await fetch(`${url}/v0.1/sessions/current`, {
     method: "DELETE", headers: { authorization: `Bearer ${session.token}` }

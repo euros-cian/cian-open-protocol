@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   AgentClient, EpochController, InteractionGateway, LanguageProofController,
-  PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
+  PostgresAppealStore, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
   createRegistryServer, createSigningService, signRecord
 } from "../src/index.js";
 
@@ -108,6 +108,12 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   const sessions = new PostgresPilotSessionStore({ pool: state.pool });
   const pilotSession = await sessions.issue({ consent: true, noticeVersion: "pilot-1", clientId: "integration-test" });
   assert.equal((await sessions.authorise(pilotSession.token)).sessionId, pilotSession.session_id);
+  const appeals = new PostgresAppealStore({ pool: state.pool });
+  const appeal = await appeals.create({
+    sessionId: pilotSession.session_id,
+    input: { interaction_id: received.interaction.interaction_id, proof_id: proof.proof_id, disputed_decision: "QUALIFIES", reason_code: "false_positive" }
+  });
+  assert.equal((await appeals.get({ appealId: appeal.appeal_id, sessionId: pilotSession.session_id })).status, "open");
   assert.equal((await sessions.withdraw(pilotSession.token)).status, "consent_withdrawn");
   await assert.rejects(() => sessions.authorise(pilotSession.token), /authorisation/);
 });

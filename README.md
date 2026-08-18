@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.9 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.10 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -184,6 +184,19 @@ Set `CIAN_VALIDATOR_URL=http://127.0.0.1:8791` and the same strong
 `CIAN_VALIDATOR_API_TOKEN` in the validator and pilot API processes to enable the
 remote mode. Use a separate `CIAN_VALIDATOR_KEY_PASSPHRASE` for the validator's
 encrypted identity. See [Milestone 8](docs/milestone-8.md).
+
+## Validator evaluation and appeals
+
+`npm run eval:welsh` produces a reproducible confusion matrix for the versioned
+Welsh profile. The included seed corpus is deliberately marked `unreviewed`; the
+report therefore sets `production_claim_allowed` to false regardless of its
+apparent accuracy. Labels must be reviewed by fluent Welsh experts and should be
+expanded across dialect, learner, code-switching and adversarial cases.
+
+Authenticated clients can submit a structured, privacy-minimised appeal with
+`POST /v0.1/appeals` and retrieve it with `GET /v0.1/appeals/{appeal_id}`. Appeals
+store identifiers, profile, disputed decision and reason code—not interaction
+text. See [Milestone 9](docs/milestone-9.md).
 
 ## Local registry API
 

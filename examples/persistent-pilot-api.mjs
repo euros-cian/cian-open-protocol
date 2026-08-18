@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
-  AgentClient, ConversationalProtocolAgent, InteractionGateway, LanguageProofController,
+  AgentClient, ConversationalProtocolAgent, InteractionGateway, LanguageProofController, PostgresAppealStore,
   OpenAIResponsesProvider, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry,
   RemoteWelshValidator, WelshValidator, createConversationServer, createSigningService
 } from "../src/index.js";
@@ -53,7 +53,8 @@ if (missing.length) {
   });
   const service = createConversationServer({
     agent, sessionIssuerToken: process.env.CIAN_SESSION_ISSUER_TOKEN,
-    sessions: new PostgresPilotSessionStore({ pool: registry.pool })
+    sessions: new PostgresPilotSessionStore({ pool: registry.pool }),
+    appeals: new PostgresAppealStore({ pool: registry.pool })
   });
   const address = await service.listen({
     host: process.env.CIAN_PILOT_HOST ?? "127.0.0.1",

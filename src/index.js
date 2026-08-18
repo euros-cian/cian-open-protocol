@@ -24,3 +24,5 @@ export { createConversationServer } from "./conversation-server.js";
 export { PostgresPilotSessionStore } from "./postgres-pilot-session.js";
 export { RemoteWelshValidator } from "./remote-validator.js";
 export { createValidatorServer } from "./validator-server.js";
+export { InMemoryAppealStore, PostgresAppealStore } from "./appeal-store.js";
+export { evaluateWelshCases } from "./welsh-evaluation.js";

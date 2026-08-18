@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/validation-appeal.schema.json",
+  "type": "object",
+  "required": ["appeal_id", "interaction_id", "language_profile", "disputed_decision", "reason_code", "status", "submitted_at"],
+  "properties": {
+    "appeal_id": { "type": "string", "pattern": "^appeal:" },
+    "interaction_id": { "type": "string", "minLength": 1 },
+    "proof_id": { "type": ["string", "null"] },
+    "language_profile": { "type": "string", "minLength": 1 },
+    "disputed_decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY"] },
+    "reason_code": { "enum": ["false_positive", "false_negative", "mixed_language", "learner_language", "dialect", "other"] },
+    "status": { "enum": ["open", "under_review", "upheld", "overturned", "closed"] },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": true
+}
