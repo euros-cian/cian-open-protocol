@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.5",
+  "version": "0.1.0-alpha.6",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
   "private": true,
@@ -13,7 +13,8 @@
     "check": "node --test",
     "demo": "node examples/two-agent-demo.mjs",
     "demo:proof": "node examples/language-proof-demo.mjs",
-    "demo:live-agent": "node examples/live-openai-agent.mjs"
+    "demo:live-agent": "node examples/live-openai-agent.mjs",
+    "demo:pilot": "node examples/persistent-pilot-agent.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"

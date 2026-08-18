@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.5 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.6 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -37,6 +37,7 @@ npm test
 npm run demo
 npm run demo:proof
 npm run demo:live-agent
+npm run demo:pilot
 ```
 
 The implementation uses integer quantities, Ed25519 signatures, deterministic
@@ -110,6 +111,31 @@ The live command sends the clear conversational text to the selected model
 provider. The Language Proof and settlement layers receive only a digest and
 minimal evidence. Do not enter confidential or personal information in the alpha
 demo. See [Milestone 4](docs/milestone-4.md).
+
+## Persistent pilot
+
+`npm run demo:pilot` advances the live demo to restart-safe protocol state. It
+uses PostgreSQL for attestations, Language Proofs, epochs and balances, and stores
+the agent, gateway, validator, proof-controller and epoch-controller identities
+as encrypted files under the ignored `secrets/pilot` directory. See
+[Milestone 5](docs/milestone-5.md).
+
+Use a dedicated database and a strong passphrase that you can recover. Do not use
+`CIAN_TEST_DATABASE_URL`: the integration test associated with that variable
+deliberately clears protocol tables.
+
+```powershell
+$env:CIAN_DATABASE_URL = "postgresql://...?...&sslmode=verify-full"
+$secure = Read-Host "Pilot key passphrase" -AsSecureString
+$pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+$env:CIAN_PILOT_KEY_PASSPHRASE = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer)
+[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer)
+npm run demo:pilot
+```
+
+The pilot still sends clear conversation text to the selected model provider.
+Back up `secrets/pilot` securely: losing it loses the protocol identities, while
+exposing it together with the passphrase exposes their signing keys.
 
 ## Local registry API
 
