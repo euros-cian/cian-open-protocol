@@ -88,3 +88,22 @@ test("session manager expires sessions, enforces a turn window and purges metada
   assert.throws(() => sessions.authorise(issued.token), /expired/);
   assert.equal(sessions.purgeExpired().deleted_sessions, 1);
 });
+
+test("protocol cockpit is opt-in and issues consented sessions only in local demo mode", async t => {
+  const service = createConversationServer({
+    agent: { async handle() {} }, sessionIssuerToken: "issuer-secret", enableLocalDemo: true,
+    serviceInfo: { validator_mode: "independent", persistence: "postgresql", demo_ui: true }
+  });
+  t.after(() => service.close());
+  const url = await service.listen();
+  const page = await fetch(`${url}/demo`);
+  assert.equal(page.status, 200);
+  assert.match(await page.text(), /Protocol Cockpit/);
+  const health = await (await fetch(`${url}/health`)).json();
+  assert.equal(health.validator_mode, "independent");
+  const session = await fetch(`${url}/v0.1/demo/session`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consent: true })
+  });
+  assert.equal(session.status, 201);
+  assert.ok((await session.json()).token);
+});

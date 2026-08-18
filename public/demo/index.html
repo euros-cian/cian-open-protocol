@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cian Protocol Cockpit</title>
+  <link rel="stylesheet" href="/demo/styles.css">
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="mark">CIAN</span><span>Open Protocol</span></div>
+    <div class="status"><i id="statusDot"></i><span id="systemStatus">Connecting…</span></div>
+  </header>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">LANGUAGE IN · COMPUTE OUT</p>
+      <h1>Watch language become<br><em>verifiable agency.</em></h1>
+      <p class="lede">A live view of Welsh interaction moving through independent cryptographic trust.</p>
+    </section>
+
+    <section class="pipeline" aria-label="Protocol pipeline">
+      <article data-stage="gateway"><b>01</b><span>Gateway</span><small>Origin unsigned</small></article>
+      <div class="arrow">→</div>
+      <article data-stage="agent"><b>02</b><span>AI Agent</span><small>Waiting</small></article>
+      <div class="arrow">→</div>
+      <article data-stage="validator"><b>03</b><span>Validator</span><small>Independent</small></article>
+      <div class="arrow">→</div>
+      <article data-stage="proof"><b>04</b><span>Language Proof</span><small>Not created</small></article>
+      <div class="arrow">→</div>
+      <article data-stage="database"><b>05</b><span>PostgreSQL</span><small>Durable state</small></article>
+    </section>
+
+    <section id="consentPanel" class="consent card">
+      <div><p class="eyebrow">LOCAL TECHNICAL DEMO</p><h2>Begin a consented session</h2>
+      <p>Clear conversation text is sent to the configured AI provider and independent validator. Protocol storage receives signed digests and minimal evidence.</p></div>
+      <label><input id="consent" type="checkbox"> I understand and consent to this local demonstration.</label>
+      <button id="begin">Enter the cockpit</button>
+    </section>
+
+    <section id="cockpit" class="cockpit hidden">
+      <div class="chat card">
+        <div class="card-head"><div><p class="eyebrow">LIVE CONVERSATION</p><h2>Speak with the Cian agent</h2></div><span id="sessionBadge">Session active</span></div>
+        <div id="messages" class="messages"><div class="message system">Try: “Helo, hoffwn wneud y dasg hon yn Gymraeg.”</div></div>
+        <form id="chatForm"><textarea id="message" rows="2" maxlength="10000" placeholder="Write in Welsh or mixed Welsh/English…"></textarea><button>Send through protocol</button></form>
+      </div>
+      <aside class="evidence card">
+        <p class="eyebrow">CRYPTOGRAPHIC EVIDENCE</p><h2>Current interaction</h2>
+        <dl id="evidence"><dt>State</dt><dd>Awaiting interaction</dd></dl>
+        <button id="appeal" class="secondary hidden">Submit test appeal</button>
+      </aside>
+    </section>
+
+    <section class="ledger card">
+      <div><p class="eyebrow">PROOF LEDGER</p><h2>Accepted Language Proofs</h2></div>
+      <strong id="proofCount">0</strong>
+      <p>Proofs are evidence ready for a finite, compute-backed epoch. They are not money and do not create compute by themselves.</p>
+    </section>
+  </main>
+  <footer>Cian Open Protocol v0.1 · Experimental reference implementation · Localhost only</footer>
+  <script src="/demo/app.js" type="module"></script>
+</body>
+</html>

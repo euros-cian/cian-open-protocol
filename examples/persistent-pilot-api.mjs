@@ -54,15 +54,27 @@ if (missing.length) {
   const service = createConversationServer({
     agent, sessionIssuerToken: process.env.CIAN_SESSION_ISSUER_TOKEN,
     sessions: new PostgresPilotSessionStore({ pool: registry.pool }),
-    appeals: new PostgresAppealStore({ pool: registry.pool })
+    appeals: new PostgresAppealStore({ pool: registry.pool }),
+    enableLocalDemo: process.env.CIAN_ENABLE_DEMO_UI === "1",
+    serviceInfo: {
+      agent_id: identity.agentId,
+      validator_mode: independentValidator ? "independent" : "in_process_fallback",
+      persistence: "postgresql",
+      demo_ui: process.env.CIAN_ENABLE_DEMO_UI === "1"
+    }
   });
+  const host = process.env.CIAN_PILOT_HOST ?? "127.0.0.1";
+  if (process.env.CIAN_ENABLE_DEMO_UI === "1" && host !== "127.0.0.1") {
+    throw new Error("the local demo UI may only bind to 127.0.0.1");
+  }
   const address = await service.listen({
-    host: process.env.CIAN_PILOT_HOST ?? "127.0.0.1",
+    host,
     port: Number(process.env.CIAN_PILOT_PORT ?? 8790)
   });
   console.log(`Cian pilot API listening at ${address}`);
   console.log(`Persistent agent: ${identity.agentId}`);
   console.log(`Validator mode: ${independentValidator ? "independent remote service" : "in-process alpha fallback"}`);
+  if (process.env.CIAN_ENABLE_DEMO_UI === "1") console.log(`Protocol cockpit: ${address}/demo`);
   console.log("Press Ctrl+C to stop. Use TLS termination before exposing this service to a network.");
 
   const close = async () => {

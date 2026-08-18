@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.11 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.12 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -208,6 +208,23 @@ immutable and unique per appeal.
 Resolutions are explicitly `prospective_profile_review_only`: they identify
 validator problems for correction and reporting but never silently alter an
 existing proof, epoch or settlement balance. See [Milestone 10](docs/milestone-10.md).
+
+## Visual protocol cockpit
+
+Set `CIAN_ENABLE_DEMO_UI=1` before starting `npm run demo:pilot-api`, then open
+`http://127.0.0.1:8790/demo`. The cockpit visualises the live gateway, model,
+independent validator, Language Proof and PostgreSQL stages, displays
+privacy-minimised cryptographic evidence, and can submit a structured appeal.
+
+The cockpit session shortcut works only in explicit demo mode from the loopback
+interface. The pilot refuses to enable it when bound to a non-loopback host. It
+is a visual technical demonstration, not a public or production user interface.
+See [Milestone 11](docs/milestone-11.md).
+
+For a no-credentials visual preview using clearly labelled deterministic mock
+records, run `npm run demo:cockpit-preview` and open
+`http://127.0.0.1:8793/demo`. Use the port 8790 pilot mode to demonstrate real
+OpenAI, validator and PostgreSQL activity.
 
 ## Local registry API
 
