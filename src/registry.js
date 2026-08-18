@@ -10,6 +10,7 @@ export class SettlementRegistry {
     this.now = now;
     this.verifySignature = verifySignature;
     this.agents = new Set();
+    this.manifests = new Map();
     this.accounts = new Map();
     this.acceptedIds = new Set();
     this.acceptedNonces = new Set();
@@ -19,7 +20,17 @@ export class SettlementRegistry {
     this.journal = [];
   }
 
-  registerAgent(agentId) { this.agents.add(agentId); }
+  registerAgent(agentOrManifest) {
+    const agentId = typeof agentOrManifest === "string" ? agentOrManifest : agentOrManifest.agent_id;
+    if (!agentId) throw new Error("agent_id is required");
+    this.agents.add(agentId);
+    if (typeof agentOrManifest === "object") this.manifests.set(agentId, structuredClone(agentOrManifest));
+  }
+
+  agent(agentId) {
+    if (!this.agents.has(agentId)) return null;
+    return this.manifests.has(agentId) ? structuredClone(this.manifests.get(agentId)) : { agent_id: agentId };
+  }
 
   #key(agentId, seriesId) { return `${agentId}\u0000${seriesId}`; }
 
@@ -77,6 +88,12 @@ export class SettlementRegistry {
     this.#consumeRequest(request.redemption_id, request.nonce);
     this.redemptions.set(request.redemption_id, { ...request, status: "locked" });
     this.journal.push({ type: "redemption_locked", redemption_id: request.redemption_id });
+    return { redemption_id: request.redemption_id, status: "locked", amount: request.amount, series_id: request.series_id };
+  }
+
+  redemption(redemptionId) {
+    const item = this.redemptions.get(redemptionId);
+    return item ? structuredClone(item) : null;
   }
 
   retire(redemptionId, executionReceipt) {

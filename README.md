@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha reference implementation**. This repository is experimental
+Status: **v0.1 alpha.2 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -26,6 +26,7 @@ investment product, or a promise of cash redemption.
 - [`schemas/`](schemas/) - protocol record schemas
 - [`src/`](src/) - dependency-free JavaScript reference implementation
 - [`test/`](test/) - conformance tests for allocation, replay, transfer and redemption
+- [`examples/two-agent-demo.mjs`](examples/two-agent-demo.mjs) - complete local agent loop
 
 ## Quick start
 
@@ -33,11 +34,64 @@ Requires Node.js 20 or newer.
 
 ```sh
 npm test
+npm run demo
 ```
 
 The implementation uses integer quantities, Ed25519 signatures, deterministic
 JSON canonicalisation, in-memory transactional state and injectable clocks. It is
-for interoperability and demonstration, not production custody.
+for interoperability and demonstration, not production custody. `npm run demo`
+starts an ephemeral local registry, registers two cryptographic agent identities,
+allocates test `TB`, transfers it, redeems it and permanently retires it.
+
+## Agent SDK
+
+```js
+import { AgentClient, digest } from "./src/index.js";
+
+const agent = AgentClient.create({
+  registryUrl: "http://127.0.0.1:8787",
+  endpoint: "https://agent.example",
+  capabilities: ["research"],
+  languageProfiles: ["cy-v0.1"]
+});
+
+await agent.register();
+const balance = await agent.getBalance("TB-CY-DEMO");
+const transfer = await agent.transfer({
+  recipient: "agent:cian:...",
+  seriesId: "TB-CY-DEMO",
+  amount: 4,
+  taskId: "research-123"
+});
+const redemption = await agent.redeem({
+  seriesId: "TB-CY-DEMO",
+  amount: 2,
+  workload: digest({ task: "inference", input: "..." })
+});
+```
+
+The SDK creates a persistent identifier from an Ed25519 public key, signs its
+manifest and signs every state-changing agent request. Applications are
+responsible for storing the exported private key securely; the demo keeps keys in
+memory only.
+
+## Local registry API
+
+The dependency-free HTTP service exposes:
+
+```text
+POST /v0.1/agents/register
+GET  /v0.1/agents/{agent_id}
+GET  /v0.1/balances/{agent_id}?series_id=...
+POST /v0.1/transfers
+GET  /v0.1/transfers/{transfer_id}
+POST /v0.1/redemptions
+GET  /v0.1/redemptions/{redemption_id}
+GET  /v0.1/audit
+```
+
+Test allocation and execution verification use admin-token-protected local routes.
+They are demonstration controls, not a production issuer or compute-provider API.
 
 ## Scope boundaries
 
@@ -59,4 +113,3 @@ Licensed under Apache License 2.0. That licence includes copyright and patent
 terms; it does not grant rights to Cian names or marks. This repository is not
 legal advice. Contributors and deployers should obtain advice appropriate to
 their implementation and jurisdiction.
-

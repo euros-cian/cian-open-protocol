@@ -1,13 +1,14 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
   "private": true,
   "engines": { "node": ">=20" },
   "scripts": {
     "test": "node --test",
-    "check": "node --check src/*.js && node --test"
+    "check": "node --test",
+    "demo": "node examples/two-agent-demo.mjs"
   },
   "license": "Apache-2.0"
 }
