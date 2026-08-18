@@ -4,7 +4,10 @@ import pg from "pg";
 import { importPublicKey, verifyRecord } from "./crypto.js";
 
 const { Pool } = pg;
-const migration = readFileSync(new URL("../database/001-durable-registry.sql", import.meta.url), "utf8");
+const migration = [
+  readFileSync(new URL("../database/001-durable-registry.sql", import.meta.url), "utf8"),
+  readFileSync(new URL("../database/002-language-proof-pipeline.sql", import.meta.url), "utf8")
+].join("\n");
 
 function positiveAmount(amount) {
   if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error("amount must be a positive safe integer");

@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.3 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.4 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -35,6 +35,7 @@ Requires Node.js 20 or newer.
 ```sh
 npm test
 npm run demo
+npm run demo:proof
 ```
 
 The implementation uses integer quantities, Ed25519 signatures, deterministic
@@ -79,6 +80,14 @@ stores credentials using scrypt and AES-256-GCM; the demo keeps keys in memory o
 Production clients must pin the registry public key. Omitting it accepts the key
 advertised by the registry and is suitable only for local demonstration or a
 separately authenticated trust-on-first-use bootstrap.
+
+## Language Proof pipeline
+
+`npm run demo:proof` runs the language-to-compute side of the protocol: gateway
+origin attestation, explainable Welsh validation, highest-state reward evaluation,
+canonical Language Proof creation, finite compute-backed epoch allocation and
+one-time proof consumption. Shared records contain the interaction digest rather
+than clear human text. See [Milestone 3](docs/milestone-3.md).
 
 ## Local registry API
 

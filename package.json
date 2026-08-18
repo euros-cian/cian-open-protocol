@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
   "private": true,
@@ -11,7 +11,8 @@
     "test": "node --test",
     "test:postgres": "node --test test/postgres.integration.test.js",
     "check": "node --test",
-    "demo": "node examples/two-agent-demo.mjs"
+    "demo": "node examples/two-agent-demo.mjs",
+    "demo:proof": "node examples/language-proof-demo.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"

@@ -5,7 +5,9 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
-  AgentClient, PostgresSettlementRegistry, createRegistryServer, signRecord
+  AgentClient, EpochController, InteractionGateway, LanguageProofController,
+  PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
+  createRegistryServer, createSigningService, signRecord
 } from "../src/index.js";
 
 const connectionString = process.env.CIAN_TEST_DATABASE_URL;
@@ -16,7 +18,7 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   const registryCredentialsPath = join(directory, "registry.credentials.json");
   const registryPassphrase = "postgres registry test passphrase";
   let state = await PostgresSettlementRegistry.connect({ connectionString, registryId: "registry:postgres-test" });
-  await state.pool.query("TRUNCATE protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
+  await state.pool.query("TRUNCATE protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
   let service = createRegistryServer({
     registry: state, registryId: "registry:postgres-test", adminToken,
     registryCredentialsPath, registryPassphrase
@@ -74,4 +76,32 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   });
   assert.equal(restartedA.agentId, agentA.agentId);
   assert.equal((await restartedA.getBalance(seriesId)).balance, 2);
+
+  const gatewaySigner = createSigningService({ serviceId: "gateway:postgres-test" });
+  const validatorSigner = createSigningService({ serviceId: "validator:postgres-test" });
+  const proofSigner = createSigningService({ serviceId: "proof:postgres-test" });
+  const gateway = new InteractionGateway({ signer: gatewaySigner });
+  const validator = new WelshValidator({ signer: validatorSigner });
+  const proofController = new LanguageProofController({
+    signer: proofSigner,
+    trustedGateways: [[gatewaySigner.keyId, gatewaySigner.publicKeyPem]],
+    trustedValidators: [[validatorSigner.keyId, validatorSigner.publicKeyPem]]
+  });
+  const proofStore = new PostgresProofStore({ pool: state.pool });
+  const epoch = new EpochController({ proofStore, registry: state, signer: createSigningService({ serviceId: "epoch:postgres-test" }) });
+  const received = gateway.receive({
+    text: "Helo, dw i eisiau gwneud y dasg yn Gymraeg. Diolch.",
+    recipientAgentId: agentA.agentId, humanOriginAssurance: "H2"
+  });
+  const validation = validator.validate({ interaction: received.interaction, originAttestation: received.attestation, rewardEvidence: { usefulTaskCompleted: true } });
+  const proof = proofController.issue({ originAttestation: received.attestation, validationAttestations: [validation] });
+  await proofStore.addBundle({ originAttestation: received.attestation, validationAttestations: [validation], proof });
+  const epochReport = await epoch.close({
+    seriesId: "TB-CY-POSTGRES-PIPELINE", languageProfile: "cy-v0.1",
+    commitments: [{ nominal_capacity: 40, assurance_ppm: 1_000_000, availability_ppm: 1_000_000, reserve_ppm: 1_000_000 }],
+    computeUnitsPerEntitlement: 10
+  });
+  assert.equal(epochReport.allocated_total, 4);
+  assert.equal((await restartedA.getBalance("TB-CY-POSTGRES-PIPELINE")).balance, 4);
+  assert.equal((await proofStore.get(proof.proof_id)).status, "consumed");
 });
