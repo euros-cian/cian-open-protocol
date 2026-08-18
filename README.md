@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.6 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.7 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -38,6 +38,7 @@ npm run demo
 npm run demo:proof
 npm run demo:live-agent
 npm run demo:pilot
+npm run demo:pilot-api
 ```
 
 The implementation uses integer quantities, Ed25519 signatures, deterministic
@@ -136,6 +137,20 @@ npm run demo:pilot
 The pilot still sends clear conversation text to the selected model provider.
 Back up `secrets/pilot` securely: losing it loses the protocol identities, while
 exposing it together with the passphrase exposes their signing keys.
+
+## Authenticated conversation API
+
+`npm run demo:pilot-api` exposes the persistent agent to another local application
+through `POST /v0.1/sessions` and `POST /v0.1/conversations`. Session creation
+requires an issuer secret and explicit acceptance of a versioned privacy notice.
+Conversation calls require the resulting opaque, expiring bearer token and are
+rate limited. Clear conversation text remains in process memory for model context
+but is not written to the protocol database.
+
+Set a strong random `CIAN_SESSION_ISSUER_TOKEN` in addition to the persistent
+pilot variables, then start the service. It binds to `127.0.0.1:8790` by default.
+Do not expose it directly to the internet; use an authenticated TLS reverse proxy
+and complete a privacy/security review first. See [Milestone 6](docs/milestone-6.md).
 
 ## Local registry API
 

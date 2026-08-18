@@ -19,3 +19,5 @@ export { InMemoryProofStore, PostgresProofStore } from "./proof-store.js";
 export { EpochController } from "./epoch-controller.js";
 export { OpenAIResponsesProvider, extractOutputText } from "./openai-provider.js";
 export { ConversationalProtocolAgent, DEFAULT_INSTRUCTIONS } from "./conversational-agent.js";
+export { PilotSessionManager } from "./pilot-session.js";
+export { createConversationServer } from "./conversation-server.js";
