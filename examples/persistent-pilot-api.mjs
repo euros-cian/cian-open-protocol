@@ -2,7 +2,7 @@ import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
   AgentClient, ConversationalProtocolAgent, InteractionGateway, LanguageProofController,
-  OpenAIResponsesProvider, PostgresProofStore, PostgresSettlementRegistry,
+  OpenAIResponsesProvider, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry,
   WelshValidator, createConversationServer, createSigningService
 } from "../src/index.js";
 
@@ -44,7 +44,10 @@ if (missing.length) {
     }),
     proofStore: new PostgresProofStore({ pool: registry.pool })
   });
-  const service = createConversationServer({ agent, sessionIssuerToken: process.env.CIAN_SESSION_ISSUER_TOKEN });
+  const service = createConversationServer({
+    agent, sessionIssuerToken: process.env.CIAN_SESSION_ISSUER_TOKEN,
+    sessions: new PostgresPilotSessionStore({ pool: registry.pool })
+  });
   const address = await service.listen({
     host: process.env.CIAN_PILOT_HOST ?? "127.0.0.1",
     port: Number(process.env.CIAN_PILOT_PORT ?? 8790)

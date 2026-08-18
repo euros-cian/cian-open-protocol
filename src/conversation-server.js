@@ -41,12 +41,12 @@ export function createConversationServer({ agent, sessionIssuerToken, sessions =
       if (request.method === "POST" && url.pathname === "/v0.1/sessions") {
         if (bearer(request) !== sessionIssuerToken) throw Object.assign(new Error("session issuer authorisation required"), { status: 401 });
         const body = await readJson(request);
-        return send(response, 201, sessions.issue({
+        return send(response, 201, await sessions.issue({
           consent: body.consent, noticeVersion: body.notice_version, clientId: body.client_id
         }));
       }
       if (request.method === "POST" && url.pathname === "/v0.1/conversations") {
-        const session = sessions.authorise(bearer(request));
+        const session = await sessions.authorise(bearer(request));
         const body = await readJson(request);
         if (typeof body.text !== "string" || !body.text.trim() || body.text.length > 10_000) {
           throw Object.assign(new Error("text must contain 1 to 10000 characters"), { status: 400 });
@@ -60,6 +60,14 @@ export function createConversationServer({ agent, sessionIssuerToken, sessions =
             proof_id: result.proof?.proof_id ?? null
           }
         });
+      }
+      if (request.method === "DELETE" && url.pathname === "/v0.1/sessions/current") {
+        return send(response, 200, await sessions.withdraw(bearer(request)));
+      }
+      if (request.method === "POST" && url.pathname === "/v0.1/admin/retention") {
+        if (bearer(request) !== sessionIssuerToken) throw Object.assign(new Error("session issuer authorisation required"), { status: 401 });
+        const body = await readJson(request);
+        return send(response, 200, await sessions.purgeExpired(body.expired_before ? new Date(body.expired_before) : undefined));
       }
       return send(response, 404, { error: "route not found", code: "NOT_FOUND" });
     } catch (error) {

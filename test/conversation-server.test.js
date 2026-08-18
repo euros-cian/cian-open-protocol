@@ -46,9 +46,21 @@ test("conversation API requires issuer authentication, consent and a session tok
   assert.equal(result.protocol.proof_id, "proof:test");
   assert.equal(calls[0].text, "Bore da");
   assert.equal(calls[0].sessionId, session.session_id);
+
+  response = await fetch(`${url}/v0.1/sessions/current`, {
+    method: "DELETE", headers: { authorization: `Bearer ${session.token}` }
+  });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).status, "consent_withdrawn");
+
+  response = await fetch(`${url}/v0.1/conversations`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${session.token}` },
+    body: JSON.stringify({ text: "Bore da eto" })
+  });
+  assert.equal(response.status, 401);
 });
 
-test("session manager expires sessions and enforces a turn window", () => {
+test("session manager expires sessions, enforces a turn window and purges metadata", () => {
   let time = new Date("2026-01-01T00:00:00Z");
   const sessions = new PilotSessionManager({ now: () => time, ttlMs: 1_000, windowMs: 500, maxTurnsPerWindow: 1 });
   const issued = sessions.issue({ consent: true, noticeVersion: "pilot-1" });
@@ -58,4 +70,5 @@ test("session manager expires sessions and enforces a turn window", () => {
   sessions.authorise(issued.token);
   time = new Date("2026-01-01T00:00:01.001Z");
   assert.throws(() => sessions.authorise(issued.token), /expired/);
+  assert.equal(sessions.purgeExpired().deleted_sessions, 1);
 });

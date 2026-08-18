@@ -46,4 +46,25 @@ export class PilotSessionManager {
     session.turns.push(current);
     return { sessionId: session.sessionId, noticeVersion: session.noticeVersion };
   }
+
+  withdraw(token) {
+    const digest = typeof token === "string" ? tokenDigest(token) : null;
+    const session = digest ? this.sessions.get(digest) : null;
+    if (!session) throw Object.assign(new Error("valid active session required"), { status: 401 });
+    this.sessions.delete(digest);
+    return { session_id: session.sessionId, status: "consent_withdrawn" };
+  }
+
+  purgeExpired(before = this.now()) {
+    const cutoff = before instanceof Date ? before : new Date(before);
+    if (Number.isNaN(cutoff.getTime()) || cutoff > this.now()) throw Object.assign(new Error("retention cutoff must be a valid past date"), { status: 400 });
+    let deleted = 0;
+    for (const [digest, session] of this.sessions) {
+      if (Date.parse(session.expiresAt) <= cutoff.getTime()) {
+        this.sessions.delete(digest);
+        deleted += 1;
+      }
+    }
+    return { deleted_sessions: deleted, cutoff: cutoff.toISOString() };
+  }
 }

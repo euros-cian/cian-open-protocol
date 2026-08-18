@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.7 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.8 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -151,6 +151,20 @@ Set a strong random `CIAN_SESSION_ISSUER_TOKEN` in addition to the persistent
 pilot variables, then start the service. It binds to `127.0.0.1:8790` by default.
 Do not expose it directly to the internet; use an authenticated TLS reverse proxy
 and complete a privacy/security review first. See [Milestone 6](docs/milestone-6.md).
+
+Session metadata and SHA-256 token digests now persist across API restarts in
+PostgreSQL; clear tokens and conversation text are never written there. A client
+can withdraw consent and immediately invalidate its session with:
+
+```text
+DELETE /v0.1/sessions/current
+Authorization: Bearer <session-token>
+```
+
+The issuer can delete expired and withdrawn session metadata with
+`POST /v0.1/admin/retention`. This deliberately does not delete independently
+signed protocol proofs or settlement records, whose separate governance and
+retention rules must preserve audit integrity. See [Milestone 7](docs/milestone-7.md).
 
 ## Local registry API
 

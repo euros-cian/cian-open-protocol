@@ -21,3 +21,4 @@ export { OpenAIResponsesProvider, extractOutputText } from "./openai-provider.js
 export { ConversationalProtocolAgent, DEFAULT_INSTRUCTIONS } from "./conversational-agent.js";
 export { PilotSessionManager } from "./pilot-session.js";
 export { createConversationServer } from "./conversation-server.js";
+export { PostgresPilotSessionStore } from "./postgres-pilot-session.js";

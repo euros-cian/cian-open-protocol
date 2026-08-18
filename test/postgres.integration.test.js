@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   AgentClient, EpochController, InteractionGateway, LanguageProofController,
-  PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
+  PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
   createRegistryServer, createSigningService, signRecord
 } from "../src/index.js";
 
@@ -18,7 +18,7 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   const registryCredentialsPath = join(directory, "registry.credentials.json");
   const registryPassphrase = "postgres registry test passphrase";
   let state = await PostgresSettlementRegistry.connect({ connectionString, registryId: "registry:postgres-test" });
-  await state.pool.query("TRUNCATE protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
+  await state.pool.query("TRUNCATE protocol_pilot_sessions, protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
   let service = createRegistryServer({
     registry: state, registryId: "registry:postgres-test", adminToken,
     registryCredentialsPath, registryPassphrase
@@ -104,4 +104,10 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   assert.equal(epochReport.allocated_total, 4);
   assert.equal((await restartedA.getBalance("TB-CY-POSTGRES-PIPELINE")).balance, 4);
   assert.equal((await proofStore.get(proof.proof_id)).status, "consumed");
+
+  const sessions = new PostgresPilotSessionStore({ pool: state.pool });
+  const pilotSession = await sessions.issue({ consent: true, noticeVersion: "pilot-1", clientId: "integration-test" });
+  assert.equal((await sessions.authorise(pilotSession.token)).sessionId, pilotSession.session_id);
+  assert.equal((await sessions.withdraw(pilotSession.token)).status, "consent_withdrawn");
+  await assert.rejects(() => sessions.authorise(pilotSession.token), /authorisation/);
 });
