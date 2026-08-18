@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/appeal-resolution.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "resolution_id", "appeal_id", "interaction_id", "language_profile", "disputed_decision", "outcome", "rationale_code", "reviewer_id", "effect", "resolved_at", "signature"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "resolution_id": { "type": "string", "pattern": "^resolution:" },
+    "appeal_id": { "type": "string", "pattern": "^appeal:" },
+    "interaction_id": { "type": "string", "minLength": 1 },
+    "language_profile": { "type": "string", "minLength": 1 },
+    "disputed_decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY"] },
+    "outcome": { "enum": ["upheld", "overturned"] },
+    "rationale_code": { "enum": ["validator_correct", "validator_error", "insufficient_evidence", "profile_gap"] },
+    "reviewer_id": { "type": "string", "minLength": 1 },
+    "effect": { "const": "prospective_profile_review_only" },
+    "resolved_at": { "type": "string", "format": "date-time" },
+    "signature": { "$ref": "common.schema.json#/$defs/signature" }
+  },
+  "additionalProperties": false
+}

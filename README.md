@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.10 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.11 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -197,6 +197,17 @@ Authenticated clients can submit a structured, privacy-minimised appeal with
 `POST /v0.1/appeals` and retrieve it with `GET /v0.1/appeals/{appeal_id}`. Appeals
 store identifiers, profile, disputed decision and reason code—not interaction
 text. See [Milestone 9](docs/milestone-9.md).
+
+## Signed appeal governance
+
+`npm run demo:governance` runs a separate localhost reviewer service with its own
+encrypted signing identity. An authorised reviewer may resolve an open appeal as
+`upheld` or `overturned` with a structured rationale. Each resolution is signed,
+immutable and unique per appeal.
+
+Resolutions are explicitly `prospective_profile_review_only`: they identify
+validator problems for correction and reporting but never silently alter an
+existing proof, epoch or settlement balance. See [Milestone 10](docs/milestone-10.md).
 
 ## Local registry API
 

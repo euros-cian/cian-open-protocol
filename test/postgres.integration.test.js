@@ -5,7 +5,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
-  AgentClient, EpochController, InteractionGateway, LanguageProofController,
+  AgentClient, AppealReviewer, EpochController, InteractionGateway, LanguageProofController,
   PostgresAppealStore, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
   createRegistryServer, createSigningService, signRecord
 } from "../src/index.js";
@@ -114,6 +114,10 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
     input: { interaction_id: received.interaction.interaction_id, proof_id: proof.proof_id, disputed_decision: "QUALIFIES", reason_code: "false_positive" }
   });
   assert.equal((await appeals.get({ appealId: appeal.appeal_id, sessionId: pilotSession.session_id })).status, "open");
+  const reviewer = new AppealReviewer({ store: appeals, signer: createSigningService({ serviceId: "reviewer:postgres-test" }) });
+  const resolution = await reviewer.resolve({ appealId: appeal.appeal_id, outcome: "upheld", rationaleCode: "validator_correct" });
+  assert.equal(resolution.effect, "prospective_profile_review_only");
+  assert.equal((await appeals.get({ appealId: appeal.appeal_id, sessionId: pilotSession.session_id })).resolution.resolution_id, resolution.resolution_id);
   assert.equal((await sessions.withdraw(pilotSession.token)).status, "consent_withdrawn");
   await assert.rejects(() => sessions.authorise(pilotSession.token), /authorisation/);
 });

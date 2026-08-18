@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.10",
+  "version": "0.1.0-alpha.11",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
   "private": true,
@@ -18,7 +18,8 @@
     "demo:pilot-api": "node examples/persistent-pilot-api.mjs",
     "setup:validator-trust": "node examples/setup-validator-trust.mjs",
     "demo:validator": "node examples/independent-validator.mjs",
-    "eval:welsh": "node examples/evaluate-welsh-profile.mjs"
+    "eval:welsh": "node examples/evaluate-welsh-profile.mjs",
+    "demo:governance": "node examples/appeal-governance.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"

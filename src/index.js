@@ -26,3 +26,5 @@ export { RemoteWelshValidator } from "./remote-validator.js";
 export { createValidatorServer } from "./validator-server.js";
 export { InMemoryAppealStore, PostgresAppealStore } from "./appeal-store.js";
 export { evaluateWelshCases } from "./welsh-evaluation.js";
+export { AppealReviewer, createAppealResolution } from "./appeal-review.js";
+export { createGovernanceServer } from "./governance-server.js";

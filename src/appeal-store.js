@@ -1,5 +1,6 @@
 // Copyright 2026 Cian AI Ltd. Licensed under Apache-2.0.
 import { randomUUID } from "node:crypto";
+import { createAppealResolution } from "./appeal-review.js";
 
 const REASONS = new Set(["false_positive", "false_negative", "mixed_language", "learner_language", "dialect", "other"]);
 const DECISIONS = new Set(["QUALIFIES", "DOES_NOT_QUALIFY"]);
@@ -28,6 +29,14 @@ export class InMemoryAppealStore {
     const record = this.appeals.get(appealId);
     return record?.session_id === sessionId ? structuredClone(record) : null;
   }
+  async resolve({ appealId, outcome, rationaleCode, signer, now = this.now }) {
+    const appeal = this.appeals.get(appealId);
+    const resolution = createAppealResolution({ appeal, outcome, rationaleCode, signer, now });
+    appeal.status = outcome;
+    appeal.resolved_at = resolution.resolved_at;
+    appeal.resolution = resolution;
+    return structuredClone(resolution);
+  }
 }
 
 export class PostgresAppealStore {
@@ -45,8 +54,29 @@ export class PostgresAppealStore {
   }
   async get({ appealId, sessionId }) {
     const result = await this.pool.query(
-      "SELECT * FROM protocol_validation_appeals WHERE appeal_id = $1 AND session_id = $2", [appealId, sessionId]
+      `SELECT a.*, r.record AS resolution FROM protocol_validation_appeals a
+       LEFT JOIN protocol_appeal_resolutions r ON r.appeal_id = a.appeal_id
+       WHERE a.appeal_id = $1 AND a.session_id = $2`, [appealId, sessionId]
     );
     return result.rows[0] ?? null;
+  }
+  async resolve({ appealId, outcome, rationaleCode, signer, now = this.now }) {
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      const result = await client.query("SELECT * FROM protocol_validation_appeals WHERE appeal_id = $1 FOR UPDATE", [appealId]);
+      const appeal = result.rows[0];
+      const resolution = createAppealResolution({ appeal, outcome, rationaleCode, signer, now });
+      await client.query(
+        `INSERT INTO protocol_appeal_resolutions
+         (resolution_id, appeal_id, outcome, rationale_code, record, reviewer_id, resolved_at)
+         VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7)`,
+        [resolution.resolution_id, appealId, outcome, rationaleCode, JSON.stringify(resolution), resolution.reviewer_id, resolution.resolved_at]
+      );
+      await client.query("UPDATE protocol_validation_appeals SET status = $2, resolved_at = $3 WHERE appeal_id = $1", [appealId, outcome, resolution.resolved_at]);
+      await client.query("COMMIT");
+      return resolution;
+    } catch (error) { await client.query("ROLLBACK"); throw error; }
+    finally { client.release(); }
   }
 }
