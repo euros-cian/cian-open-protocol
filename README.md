@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.4 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.5 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -36,6 +36,7 @@ Requires Node.js 20 or newer.
 npm test
 npm run demo
 npm run demo:proof
+npm run demo:live-agent
 ```
 
 The implementation uses integer quantities, Ed25519 signatures, deterministic
@@ -88,6 +89,27 @@ origin attestation, explainable Welsh validation, highest-state reward evaluatio
 canonical Language Proof creation, finite compute-backed epoch allocation and
 one-time proof consumption. Shared records contain the interaction digest rather
 than clear human text. See [Milestone 3](docs/milestone-3.md).
+
+## Live conversational agent
+
+`npm run demo:live-agent` starts an interactive Welsh-first agent backed by the
+OpenAI Responses API. The interaction gateway signs the human input digest before
+the model request. Qualifying Welsh turns then pass through validation and proof
+creation; `/close` closes a small in-memory demonstration epoch.
+
+```powershell
+$secure = Read-Host "OpenAI API key" -AsSecureString
+$pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+$env:OPENAI_API_KEY = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer)
+[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer)
+$env:OPENAI_MODEL = "gpt-5.6-luna"
+npm run demo:live-agent
+```
+
+The live command sends the clear conversational text to the selected model
+provider. The Language Proof and settlement layers receive only a digest and
+minimal evidence. Do not enter confidential or personal information in the alpha
+demo. See [Milestone 4](docs/milestone-4.md).
 
 ## Local registry API
 
