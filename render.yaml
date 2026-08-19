@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: cian-open-protocol-sandbox
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile.sandbox
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    maxShutdownDelaySeconds: 30
+    disk:
+      name: sandbox-registry-credentials
+      mountPath: /var/data/cian
+      sizeGB: 1
+    envVars:
+      - key: CIAN_SANDBOX_DATABASE_URL
+        sync: false
+      - key: CIAN_SANDBOX_ADMIN_TOKEN
+        sync: false
+      - key: CIAN_SANDBOX_KEY_PASSPHRASE
+        sync: false
+      - key: CIAN_SANDBOX_CREDENTIALS
+        value: /var/data/cian/registry.credentials.json
+      - key: CIAN_SANDBOX_RATE_LIMIT
+        value: "60"
+      - key: CIAN_SANDBOX_MAX_PROVIDER_CAPACITY
+        value: "100"

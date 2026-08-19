@@ -8,6 +8,8 @@ export { ComputePool, LocalComputeProvider } from "./compute-pool.js";
 export { ComputeCoordinator, createExecutionReceipt } from "./compute-coordinator.js";
 export { InMemoryComputeJobStore, PostgresComputeJobStore } from "./compute-job-store.js";
 export { createComputePoolServer } from "./compute-server.js";
+export { createPublicSandboxServer } from "./sandbox-server.js";
+export { InMemorySandboxStore, PostgresSandboxStore } from "./sandbox-store.js";
 export { RemoteComputeProviderClient } from "./remote-compute-provider.js";
 export { createProviderOnboardingBundle, createSafeComputeExecutor, validateProviderProfile } from "./provider-onboarding.js";
 export { SettlementRegistry } from "./registry.js";
