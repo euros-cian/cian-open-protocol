@@ -85,7 +85,7 @@
   },
   "homepage": "https://github.com/euros-cian/cian-open-protocol#readme",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "scripts": {
     "test": "node --test",
