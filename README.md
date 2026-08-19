@@ -1,8 +1,20 @@
 # Cian Open Protocol
 
+<img src="public/brand/cian-ai.png" alt="Cian AI" width="180">
+
 An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
-AI agents. Welsh first.
+AI agents.
+
+**Pioneered in Wales. Welsh first. Open to every language.**
+
+Cian is developing and proving the protocol first with Cymraeg in Wales, where a
+living minority language provides a demanding real-world foundation for
+language technology. The protocol itself is not Welsh-only: its core is open,
+language-neutral and designed so communities can create independently governed,
+versioned profiles for other minority and under-resourced languages. Our aim is
+to let those communities participate on their own terms without making Cian the
+sole authority over their language.
 
 Status: **v0.1 alpha.18 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human

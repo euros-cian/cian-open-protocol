@@ -19,7 +19,7 @@ function sendJson(response, status, body) {
   response.end(JSON.stringify(body));
 }
 
-export function createWelshReviewServer({ cases, reviewerId, outputPath, uiHtml, now = () => new Date() }) {
+export function createWelshReviewServer({ cases, reviewerId, outputPath, uiHtml, logoPng, now = () => new Date() }) {
   if (!Array.isArray(cases) || !cases.length || !reviewerId || !outputPath || !uiHtml) throw new Error("cases, reviewerId, outputPath and uiHtml are required");
   const caseById = new Map(cases.map(item => [item.case_id, { case_id: item.case_id, text: item.text, category: item.category }]));
   const completed = new Set();
@@ -29,6 +29,10 @@ export function createWelshReviewServer({ cases, reviewerId, outputPath, uiHtml,
       if (request.method === "GET" && url.pathname === "/") {
         response.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "content-security-policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'", "x-content-type-options": "nosniff" });
         return response.end(uiHtml);
+      }
+      if (request.method === "GET" && url.pathname === "/cian-ai.png" && logoPng) {
+        response.writeHead(200, { "content-type": "image/png", "cache-control": "no-store", "x-content-type-options": "nosniff" });
+        return response.end(logoPng);
       }
       if (request.method === "GET" && url.pathname === "/v0.1/review-cases") {
         return sendJson(response, 200, { reviewer_id: reviewerId, cases: [...caseById.values()].map(item => ({ ...item, completed: completed.has(item.case_id) })) });

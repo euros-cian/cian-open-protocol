@@ -99,6 +99,9 @@ test("protocol cockpit is opt-in and issues consented sessions only in local dem
   const page = await fetch(`${url}/demo`);
   assert.equal(page.status, 200);
   assert.match(await page.text(), /Protocol Cockpit/);
+  const logo = await fetch(`${url}/demo/cian-ai.png`);
+  assert.equal(logo.status, 200);
+  assert.equal(logo.headers.get("content-type"), "image/png");
   const health = await (await fetch(`${url}/health`)).json();
   assert.equal(health.validator_mode, "independent");
   const session = await fetch(`${url}/v0.1/demo/session`, {

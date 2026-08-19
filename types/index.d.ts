@@ -61,7 +61,7 @@ export function evaluateWelshCases(cases:unknown[],options?:Record<string,unknow
 export type WelshReview = { case_id:string; reviewer_id:string; decision:"QUALIFIES"|"DOES_NOT_QUALIFY"|"REVIEW_REQUIRED"; role:"reviewer"|"adjudicator"; reviewed_at?:string };
 export function createBlindReviewPacket(cases:Array<Record<string,unknown>>):Array<{case_id:string;text:string;category:string}>;
 export function assessWelshReview(options:{cases:Array<Record<string,unknown>>;reviews:WelshReview[];analyser:(text:string)=>{decision:string};profileId?:string;minimumReviewers?:number}):Record<string,unknown>;
-export function createWelshReviewServer(options:{cases:Array<Record<string,unknown>>;reviewerId:string;outputPath:string|URL;uiHtml:string;now?:()=>Date}):{restore():Promise<void>;listen(options?:{host?:string;port?:number}):Promise<string>;close():Promise<void>};
+export function createWelshReviewServer(options:{cases:Array<Record<string,unknown>>;reviewerId:string;outputPath:string|URL;uiHtml:string;logoPng?:Uint8Array;now?:()=>Date}):{restore():Promise<void>;listen(options?:{host?:string;port?:number}):Promise<string>;close():Promise<void>};
 export function extractOutputText(response:unknown):string;
 export function encryptCredentials(credentials:unknown,passphrase:string):unknown;
 export function decryptCredentials(envelope:unknown,passphrase:string):unknown;

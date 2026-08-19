@@ -9,7 +9,8 @@ const demoAssets = new Map([
   ["/demo", ["text/html; charset=utf-8", readFileSync(new URL("../public/demo/index.html", import.meta.url))]],
   ["/demo/", ["text/html; charset=utf-8", readFileSync(new URL("../public/demo/index.html", import.meta.url))]],
   ["/demo/app.js", ["text/javascript; charset=utf-8", readFileSync(new URL("../public/demo/app.js", import.meta.url))]],
-  ["/demo/styles.css", ["text/css; charset=utf-8", readFileSync(new URL("../public/demo/styles.css", import.meta.url))]]
+  ["/demo/styles.css", ["text/css; charset=utf-8", readFileSync(new URL("../public/demo/styles.css", import.meta.url))]],
+  ["/demo/cian-ai.png", ["image/png", readFileSync(new URL("../public/brand/cian-ai.png", import.meta.url))]]
 ]);
 
 async function readJson(request) {

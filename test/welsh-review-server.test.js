@@ -10,12 +10,15 @@ test("local review cockpit hides labels and records one blinded decision", async
   const outputPath = join(directory, "reviews.jsonl");
   const service = createWelshReviewServer({
     cases: [{ case_id: "case-1", text: "Bore da", category: "greeting", expected_decision: "QUALIFIES" }],
-    reviewerId: "reviewer:test", outputPath, uiHtml: "<h1>Review</h1>", now: () => new Date("2026-08-19T12:00:00Z")
+    reviewerId: "reviewer:test", outputPath, uiHtml: "<h1>Review</h1>", logoPng: Buffer.from("test-logo"), now: () => new Date("2026-08-19T12:00:00Z")
   });
   const address = await service.listen({ port: 0 });
   try {
     const packet = await fetch(`${address}/v0.1/review-cases`).then(response => response.json());
     assert.equal(packet.cases[0].expected_decision, undefined);
+    const logo = await fetch(`${address}/cian-ai.png`);
+    assert.equal(logo.status, 200);
+    assert.equal(logo.headers.get("content-type"), "image/png");
     const response = await fetch(`${address}/v0.1/reviews`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ case_id: "case-1", decision: "QUALIFIES" }) });
     assert.equal(response.status, 201);
     const duplicate = await fetch(`${address}/v0.1/reviews`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ case_id: "case-1", decision: "QUALIFIES" }) });
