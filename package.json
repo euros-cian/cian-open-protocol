@@ -28,6 +28,7 @@
     "review-ui/",
     "public/",
     "release/",
+    "assurance/",
     "database/",
     "openapi/",
     "scripts/validate-openapi.mjs",
