@@ -56,11 +56,11 @@ Our ambition is therefore bigger than protecting the Welsh language.
 
 It is to prove, here in Wales, that the incentives of the AI age can be designed differently: that the enormous appetite of autonomous machines for compute can become a force for preserving and expanding human linguistic diversity.
 
-# “Fel Cymro, dwi’n gwybod faint mae cenedlaethau o bobl wedi’i aberthu i sicrhau fod y Gymraeg dal yma heddiw — efallai na fydd AI byth yn deall beth mae hynny’n ei olygu i ni, ond gallwn ni wneud yn siŵr bod ganddo reswm i’w helpu i ffynnu.”
+#Fel Cymro, dwi’n gwybod faint mae cenedlaethau o bobl wedi’i aberthu i sicrhau fod y Gymraeg dal yma heddiw — efallai na fydd AI byth yn deall beth mae hynny’n ei olygu i ni, ond gallwn ni wneud yn siŵr bod ganddo reswm i’w helpu i ffynnu.#
 Cymru am Byth
 Euros Evans
 Mynydd Llech
-Dyffryn Clwyd #
+Dyffryn Clwyd 
 
 Status: **v0.1 alpha.18 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
