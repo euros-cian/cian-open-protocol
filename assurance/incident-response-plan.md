@@ -1,6 +1,6 @@
 # Incident response plan
 
-Status: **DRAFT — ACCOUNTABLE OWNER UNASSIGNED**
+Status: **DRAFT — ACCOUNTABLE OWNER NAMED; SUPPORTING ROLES PENDING**
 
 No public service may launch until one accountable individual and at least one
 deputy are named with tested contact routes. Publishing personal contact details
@@ -11,7 +11,7 @@ be referenced by controlled identifier.
 
 | Role | Named person | Responsibility |
 | --- | --- | --- |
-| Accountable incident owner | UNASSIGNED | Declares incidents, owns decisions and notifications |
+| Accountable incident owner | Euros Evans | Declares incidents, owns decisions and notifications |
 | Technical lead | UNASSIGNED | Containment, evidence and remediation |
 | Privacy/legal lead | UNASSIGNED | Personal-data and regulatory assessment |
 | Communications lead | UNASSIGNED | Accurate user/community updates |
