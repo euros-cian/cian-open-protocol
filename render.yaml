@@ -6,7 +6,6 @@ services:
     dockerfilePath: ./Dockerfile.sandbox
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    maxShutdownDelaySeconds: 30
     disk:
       name: sandbox-registry-credentials
       mountPath: /var/data/cian
