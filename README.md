@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.13 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.14 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -236,6 +236,18 @@ proof is issued when evidence is uncertain.
 
 `cy-v0.1` remains frozen for compatibility. Run `npm run eval:welsh:v2` for the
 new provisional regression corpus. See [Milestone 12](docs/milestone-12.md).
+
+## Open conformance kit
+
+Run `npm run conformance` to verify the reference implementation against the
+published v0.1 vectors. The command reports `CORE`, `PARTICIPANT`, `VALIDATOR`,
+`REGISTRY` and `GOVERNANCE` levels and writes a machine-readable report to the
+ignored `tmp/conformance-report.json` path.
+
+The vector keypair is deliberately public test material and must never control a
+real service. Passing means wire/math compatibility only—not security
+certification, Welsh linguistic accreditation, legal approval, provider solvency
+or production readiness. See [Milestone 13](docs/milestone-13.md).
 
 ## Local registry API
 

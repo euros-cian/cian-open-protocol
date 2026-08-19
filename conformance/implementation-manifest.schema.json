@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/conformance/implementation-manifest.schema.json",
+  "type": "object",
+  "required": ["implementation_name", "implementation_version", "protocol_versions", "roles"],
+  "properties": {
+    "implementation_name": { "type": "string", "minLength": 1 },
+    "implementation_version": { "type": "string", "minLength": 1 },
+    "protocol_versions": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "roles": { "type": "array", "items": { "enum": ["CORE", "PARTICIPANT", "VALIDATOR", "REGISTRY", "GOVERNANCE"] }, "minItems": 1, "uniqueItems": true },
+    "language_profiles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "source_url": { "type": "string", "format": "uri" }
+  },
+  "additionalProperties": false
+}

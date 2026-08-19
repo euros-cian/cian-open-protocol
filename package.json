@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.13",
+  "version": "0.1.0-alpha.14",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
   "private": true,
@@ -21,7 +21,8 @@
     "eval:welsh": "node examples/evaluate-welsh-profile.mjs",
     "demo:governance": "node examples/appeal-governance.mjs",
     "demo:cockpit-preview": "node examples/cockpit-preview.mjs",
-    "eval:welsh:v2": "node examples/evaluate-welsh-v2.mjs"
+    "eval:welsh:v2": "node examples/evaluate-welsh-v2.mjs",
+    "conformance": "node conformance/run.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"

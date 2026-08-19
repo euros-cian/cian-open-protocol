@@ -1,0 +1,8 @@
+{
+  "implementation_name": "@cian-ai/open-protocol",
+  "implementation_version": "0.1.0-alpha.14",
+  "protocol_versions": ["0.1"],
+  "roles": ["CORE", "PARTICIPANT", "VALIDATOR", "REGISTRY", "GOVERNANCE"],
+  "language_profiles": ["cy-v0.1", "cy-v0.2"],
+  "source_url": "https://github.com/euros-cian/cian-open-protocol"
+}

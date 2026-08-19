@@ -1,0 +1,52 @@
+{
+  "vector_set": "cian-conformance-v0.1-2026-08-19",
+  "protocol_version": "0.1",
+  "warning": "The private key is public test material and MUST NEVER control a real agent or service.",
+  "test_key": {
+    "key_id": "vector:key-1",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA6xIid5eqpLSbAvgujfMMuLH3KrwQ8TlrJ/PaQBrjFfc=\n-----END PUBLIC KEY-----\n",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIEtpuoEdbUMxL3wCb4i2XnQSyww22pRzL1JBJPbbNblg\n-----END PRIVATE KEY-----\n",
+    "agent_id": "agent:cian:0ba36fd00f0bcbea5b11a23ce3dde73d9ce97e8c5f801870d5df3e63c7f427b1"
+  },
+  "canonical": {
+    "input": { "z": [3, { "b": true, "a": null }], "a": "Cymraeg", "n": 42 },
+    "expected": "{\"a\":\"Cymraeg\",\"n\":42,\"z\":[3,{\"a\":null,\"b\":true}]}"
+  },
+  "text_digest": {
+    "input": "Bore da, Cian",
+    "expected": "sha256:1c732605301be53d1aed55d00df26ee3348a51c396c32ec2da08e7eef88ed971"
+  },
+  "signed_record": {
+    "protocol_version": "0.1", "agent_id": "agent:vector", "sequence": 0, "purpose": "conformance",
+    "signature": { "algorithm": "Ed25519", "key_id": "vector:key-1", "value": "SMb0DkowOe0PnO4Jvi7ixknG4a52tKRGwJYu4Z_IfC5PzkwQl_7tJIqKiTQEASzv7F4yjGP4J-eYdfilj2WvBA" }
+  },
+  "allocation": {
+    "proofs": [
+      { "proof_id": "proof:c", "recipient_agent_id": "agent:C", "weight": 1 },
+      { "proof_id": "proof:a", "recipient_agent_id": "agent:A", "weight": 1 },
+      { "proof_id": "proof:b", "recipient_agent_id": "agent:B", "weight": 1 }
+    ],
+    "budget": 2,
+    "expected": [
+      { "proof_id": "proof:c", "recipient_agent_id": "agent:C", "amount": 0 },
+      { "proof_id": "proof:a", "recipient_agent_id": "agent:A", "amount": 1 },
+      { "proof_id": "proof:b", "recipient_agent_id": "agent:B", "amount": 1 }
+    ]
+  },
+  "capacity": {
+    "commitment": { "nominal_capacity": 1000, "assurance_ppm": 900000, "availability_ppm": 900000, "reserve_ppm": 800000 },
+    "units_per_entitlement": 2, "recognised": 648, "budget": 324
+  },
+  "validator_cases": [
+    { "text": "so bore da cian", "expected": "QUALIFIES" },
+    { "text": "I visited Cymru and bought a map.", "expected": "REVIEW_REQUIRED" },
+    { "text": "Please finish this task today.", "expected": "DOES_NOT_QUALIFY" }
+  ],
+  "appeal_resolution": {
+    "protocol_version": "0.1", "resolution_id": "resolution:vector-001", "appeal_id": "appeal:vector-001",
+    "interaction_id": "interaction:vector-001", "language_profile": "cy-v0.2", "disputed_decision": "REVIEW_REQUIRED",
+    "outcome": "overturned", "rationale_code": "profile_gap", "reviewer_id": "reviewer:vector",
+    "effect": "prospective_profile_review_only", "resolved_at": "2026-08-19T12:00:00.000Z",
+    "signature": { "algorithm": "Ed25519", "key_id": "vector:key-1", "value": "DYgnJw50Ccrf2f47HIhsvxSGwHvAh5SkLfJ6ricJAfoqwx6Tjx7BQ0gB9c-NXge0aNAfuaG0ARJE2QESGwudBQ" }
+  }
+}
