@@ -9,7 +9,12 @@ export function createComputePoolServer({coordinator,store,adminToken}={}){
   if(!coordinator||!store||!adminToken)throw new Error("coordinator, store and admin token are required");
   const server=createServer(async(request,response)=>{try{const url=new URL(request.url,`http://${request.headers.host??"127.0.0.1"}`);
     if(request.method==="GET"&&url.pathname==="/health")return send(response,200,{status:"ok",protocol_version:"0.1",role:"compute-pool"});
+    if(request.method==="GET"&&url.pathname==="/v0.1/compute/admin/operations"){if(bearer(request)!==adminToken)throw Object.assign(new Error("admin authorisation required"),{status:401});return send(response,200,await coordinator.operations());}
     if(request.method==="POST"&&url.pathname==="/v0.1/compute/providers/register"){if(bearer(request)!==adminToken)throw Object.assign(new Error("admin authorisation required"),{status:401});return send(response,201,await coordinator.registerProvider(await readJson(request)));}
+    const suspend=/^\/v0\.1\/compute\/admin\/providers\/([^/]+)\/suspend$/.exec(url.pathname);
+    if(request.method==="POST"&&suspend){if(bearer(request)!==adminToken)throw Object.assign(new Error("admin authorisation required"),{status:401});const body=await readJson(request);return send(response,200,await coordinator.suspendProvider(decodeURIComponent(suspend[1]),body.reason_code));}
+    const resume=/^\/v0\.1\/compute\/admin\/providers\/([^/]+)\/resume$/.exec(url.pathname);
+    if(request.method==="POST"&&resume){if(bearer(request)!==adminToken)throw Object.assign(new Error("admin authorisation required"),{status:401});return send(response,200,await coordinator.resumeProvider(decodeURIComponent(resume[1])));}
     if(request.method==="POST"&&url.pathname==="/v0.1/compute/jobs"){const body=await readJson(request);return send(response,201,publicJob(await coordinator.enqueue({redemptionId:body.redemption_id,workload:body.workload})));}
     const claim=/^\/v0\.1\/compute\/providers\/([^/]+)\/claim$/.exec(url.pathname);
     if(request.method==="POST"&&claim){const providerId=decodeURIComponent(claim[1]);if(!await store.authenticate(providerId,bearer(request)??""))throw Object.assign(new Error("provider authorisation required"),{status:401});const job=await coordinator.claim(providerId);return job?send(response,200,job):send(response,204,{});}

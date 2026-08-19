@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Cian Open Protocol API
-  version: 0.1.0-alpha.23
+  version: 0.1.0-alpha.24
   description: Experimental v0.1 registry, conversation, validation and governance interfaces. Compatibility is not security or production certification.
 servers:
   - url: http://127.0.0.1:8787
@@ -81,6 +81,27 @@ paths:
       security: [ { computeAdminBearer: [] } ]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [commitment, publicKeyPem, apiToken], properties: { commitment: { $ref: '#/components/schemas/SignedRecord' }, publicKeyPem: { type: string }, apiToken: { type: string, minLength: 32 } } } } } }
       responses: { '201': { description: Signed capacity commitment registered }, '401': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/admin/operations:
+    get:
+      tags: [Compute]
+      operationId: getComputeOperations
+      security: [ { computeAdminBearer: [] } ]
+      responses: { '200': { description: Provider status, aggregate job counts, expired leases, alerts and recent control events without workload content }, '401': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/admin/providers/{provider_id}/suspend:
+    post:
+      tags: [Compute]
+      operationId: suspendComputeProvider
+      security: [ { computeAdminBearer: [] } ]
+      parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } } ]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [reason_code], properties: { reason_code: { type: string, pattern: '^[A-Za-z0-9._-]{3,64}$' } } } } } }
+      responses: { '200': { description: Provider suspended from new claims }, '401': { $ref: '#/components/responses/Error' }, '404': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/admin/providers/{provider_id}/resume:
+    post:
+      tags: [Compute]
+      operationId: resumeComputeProvider
+      security: [ { computeAdminBearer: [] } ]
+      parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } } ]
+      responses: { '200': { description: Provider resumed for new claims }, '401': { $ref: '#/components/responses/Error' }, '404': { $ref: '#/components/responses/Error' } }
   /v0.1/compute/jobs:
     post:
       tags: [Compute]

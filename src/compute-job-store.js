@@ -18,11 +18,11 @@ function rowJob(row) {
 }
 
 export class InMemoryComputeJobStore {
-  constructor({ now = () => new Date() } = {}) { this.now = now; this.providers = new Map(); this.commitments = new Map(); this.jobs = new Map(); }
+  constructor({ now = () => new Date() } = {}) { this.now = now; this.providers = new Map(); this.commitments = new Map(); this.jobs = new Map(); this.operationEvents = []; }
   async registerProvider({ commitment, publicKeyPem, apiToken, recognisedCapacity }) {
     const existing = this.providers.get(commitment.provider_id);
     if (existing && existing.public_key !== publicKeyPem) throw new Error("provider key cannot be replaced");
-    this.providers.set(commitment.provider_id, { provider_id: commitment.provider_id, public_key: publicKeyPem, token_digest: digest(apiToken) });
+    this.providers.set(commitment.provider_id, { provider_id: commitment.provider_id, public_key: publicKeyPem, token_digest: digest(apiToken), status: existing?.status ?? "active", suspension_reason: existing?.suspension_reason ?? null, suspended_at: existing?.suspended_at ?? null, resumed_at: existing?.resumed_at ?? null });
     if (this.commitments.has(commitment.commitment_id)) throw new Error("commitment already registered");
     this.commitments.set(commitment.commitment_id, { commitment: clone(commitment), recognised_capacity: recognisedCapacity, remaining_capacity: recognisedCapacity });
     return { provider_id: commitment.provider_id, commitment_id: commitment.commitment_id, recognised_capacity: recognisedCapacity };
@@ -30,6 +30,9 @@ export class InMemoryComputeJobStore {
   async authenticate(providerId, apiToken) { return this.providers.get(providerId)?.token_digest === digest(apiToken); }
   async provider(providerId) { return clone(this.providers.get(providerId)); }
   async commitment(commitmentId) { return clone(this.commitments.get(commitmentId)); }
+  async suspendProvider(providerId, reasonCode) { const provider=this.providers.get(providerId);if(!provider)throw new Error("provider not found");provider.status="suspended";provider.suspension_reason=reasonCode;provider.suspended_at=this.now().toISOString();const event={event_type:"provider_suspended",provider_id:providerId,reason_code:reasonCode,created_at:provider.suspended_at};this.operationEvents.push(event);return clone(event); }
+  async resumeProvider(providerId) { const provider=this.providers.get(providerId);if(!provider)throw new Error("provider not found");provider.status="active";provider.suspension_reason=null;provider.resumed_at=this.now().toISOString();const event={event_type:"provider_resumed",provider_id:providerId,reason_code:null,created_at:provider.resumed_at};this.operationEvents.push(event);return clone(event); }
+  async operations() { const statuses={queued:0,running:0,completed:0,refunded:0};for(const job of this.jobs.values())statuses[job.status]=(statuses[job.status]??0)+1;const now=this.now();return{providers:[...this.providers.values()].map(({token_digest:_token,...provider})=>clone(provider)),jobs:statuses,expired_leases:[...this.jobs.values()].filter(job=>job.status==="running"&&new Date(job.lease_expires_at)<=now).length,recent_events:this.operationEvents.slice(-50).reverse().map(clone)}; }
   async enqueue(input) {
     if ([...this.jobs.values()].some(job => job.redemption_id === input.redemption_id)) throw new Error("redemption already queued");
     const stamp = this.now().toISOString();
@@ -39,6 +42,7 @@ export class InMemoryComputeJobStore {
   async job(jobId) { return clone(this.jobs.get(jobId)); }
   async claim(providerId, { leaseMs = 30_000 } = {}) {
     const now = this.now();
+    if (this.providers.get(providerId)?.status !== "active") return null;
     const entry = [...this.commitments.values()].find(item => item.commitment.provider_id === providerId && new Date(item.commitment.available_from) <= now && new Date(item.commitment.available_until) > now && item.remaining_capacity > 0);
     if (!entry) return null;
     const job = [...this.jobs.values()].find(item => item.status === "queued" && item.resource_classes.includes(entry.commitment.resource_class) && item.amount <= entry.remaining_capacity);
@@ -78,8 +82,11 @@ export class PostgresComputeJobStore {
     } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
   }
   async authenticate(providerId, apiToken) { const result = await this.pool.query("SELECT token_digest = $2 AS valid FROM protocol_compute_providers WHERE provider_id = $1", [providerId, digest(apiToken)]); return Boolean(result.rows[0]?.valid); }
-  async provider(providerId) { const result = await this.pool.query("SELECT provider_id, public_key FROM protocol_compute_providers WHERE provider_id = $1", [providerId]); return result.rowCount ? result.rows[0] : null; }
+  async provider(providerId) { const result = await this.pool.query("SELECT provider_id, public_key, status, suspension_reason, suspended_at, resumed_at FROM protocol_compute_providers WHERE provider_id = $1", [providerId]); return result.rowCount ? result.rows[0] : null; }
   async commitment(commitmentId) { const result = await this.pool.query("SELECT commitment, recognised_capacity, remaining_capacity FROM protocol_compute_commitments WHERE commitment_id = $1", [commitmentId]); return result.rowCount ? { commitment: result.rows[0].commitment, recognised_capacity: Number(result.rows[0].recognised_capacity), remaining_capacity: Number(result.rows[0].remaining_capacity) } : null; }
+  async suspendProvider(providerId,reasonCode){const now=this.now();const result=await this.pool.query("UPDATE protocol_compute_providers SET status='suspended',suspension_reason=$1,suspended_at=$2 WHERE provider_id=$3 RETURNING provider_id",[reasonCode,now,providerId]);if(!result.rowCount)throw new Error("provider not found");const event={event_type:"provider_suspended",provider_id:providerId,reason_code:reasonCode,created_at:now.toISOString()};await this.pool.query("INSERT INTO protocol_compute_operations (event_type,provider_id,reason_code,event_data,created_at) VALUES ($1,$2,$3,$4::jsonb,$5)",[event.event_type,providerId,reasonCode,JSON.stringify(event),now]);return event;}
+  async resumeProvider(providerId){const now=this.now();const result=await this.pool.query("UPDATE protocol_compute_providers SET status='active',suspension_reason=NULL,resumed_at=$1 WHERE provider_id=$2 RETURNING provider_id",[now,providerId]);if(!result.rowCount)throw new Error("provider not found");const event={event_type:"provider_resumed",provider_id:providerId,reason_code:null,created_at:now.toISOString()};await this.pool.query("INSERT INTO protocol_compute_operations (event_type,provider_id,event_data,created_at) VALUES ($1,$2,$3::jsonb,$4)",[event.event_type,providerId,JSON.stringify(event),now]);return event;}
+  async operations(){const [providers,jobs,expired,events]=await Promise.all([this.pool.query("SELECT provider_id,status,suspension_reason,suspended_at,resumed_at,registered_at FROM protocol_compute_providers ORDER BY provider_id"),this.pool.query("SELECT status,count(*)::bigint AS count FROM protocol_compute_jobs GROUP BY status"),this.pool.query("SELECT count(*)::bigint AS count FROM protocol_compute_jobs WHERE status='running' AND lease_expires_at <= $1",[this.now()]),this.pool.query("SELECT event_type,provider_id,reason_code,event_data,created_at FROM protocol_compute_operations ORDER BY operation_number DESC LIMIT 50")]);const statuses={queued:0,running:0,completed:0,refunded:0};for(const row of jobs.rows)statuses[row.status]=Number(row.count);return{providers:providers.rows.map(row=>({...row,suspended_at:row.suspended_at?.toISOString?.()??row.suspended_at,resumed_at:row.resumed_at?.toISOString?.()??row.resumed_at,registered_at:row.registered_at?.toISOString?.()??row.registered_at})),jobs:statuses,expired_leases:Number(expired.rows[0].count),recent_events:events.rows.map(row=>({...row.event_data,created_at:row.created_at.toISOString()}))};}
   async enqueue(input) {
     const stamp = this.now(); const jobId = input.job_id ?? `job:${randomUUID()}`;
     const result = await this.pool.query(`INSERT INTO protocol_compute_jobs (job_id,redemption_id,holder_agent,series_id,amount,resource_classes,workload_digest,workload,status,max_attempts,created_at,updated_at)
@@ -93,6 +100,7 @@ export class PostgresComputeJobStore {
       await client.query("BEGIN"); const now = this.now();
       const selected = await client.query(`SELECT j.*, c.commitment_id AS selected_commitment_id FROM protocol_compute_jobs j JOIN protocol_compute_commitments c
         ON c.provider_id=$1 AND c.resource_class=ANY(j.resource_classes) AND c.remaining_capacity>=j.amount
+        JOIN protocol_compute_providers p ON p.provider_id=c.provider_id AND p.status='active'
         WHERE j.status='queued' AND c.available_from<=$2 AND c.available_until>$2 ORDER BY j.created_at,c.commitment_id FOR UPDATE OF j,c SKIP LOCKED LIMIT 1`, [providerId, now]);
       if (!selected.rowCount) { await client.query("COMMIT"); return null; }
       const row = selected.rows[0]; const lease = new Date(now.getTime() + leaseMs);

@@ -19,7 +19,7 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   const registryCredentialsPath = join(directory, "registry.credentials.json");
   const registryPassphrase = "postgres registry test passphrase";
   let state = await PostgresSettlementRegistry.connect({ connectionString, registryId: "registry:postgres-test" });
-  await state.pool.query("TRUNCATE protocol_compute_jobs, protocol_compute_commitments, protocol_compute_providers, protocol_pilot_sessions, protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
+  await state.pool.query("TRUNCATE protocol_compute_operations, protocol_compute_jobs, protocol_compute_commitments, protocol_compute_providers, protocol_pilot_sessions, protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
   let service = createRegistryServer({
     registry: state, registryId: "registry:postgres-test", adminToken,
     registryCredentialsPath, registryPassphrase

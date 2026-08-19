@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.23",
+  "version": "0.1.0-alpha.24",
   "packageManager": "pnpm@11.19.0",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
@@ -42,6 +42,7 @@
     "docs/milestone-19.md",
     "docs/milestone-20.md",
     "docs/milestone-21.md",
+    "docs/milestone-22.md",
     "docs/provider-operator-guide.md",
     "docs/threat-model.md",
     "examples/third-party-agent.mjs",
@@ -52,6 +53,7 @@
     "examples/postgres-compute-restart-demo.mjs",
     "examples/multi-provider-compute-demo.mjs",
     "examples/provider-onboarding-demo.mjs",
+    "examples/compute-operations-demo.mjs",
     "examples/provider-profile.example.json",
     "LICENSE",
     "README.md",
@@ -99,7 +101,8 @@
     "demo:compute-provider": "node examples/external-compute-provider-demo.mjs",
     "demo:compute-restart": "node examples/postgres-compute-restart-demo.mjs",
     "demo:multi-provider": "node examples/multi-provider-compute-demo.mjs",
-    "demo:provider-onboarding": "node examples/provider-onboarding-demo.mjs"
+    "demo:provider-onboarding": "node examples/provider-onboarding-demo.mjs",
+    "demo:compute-operations": "node examples/compute-operations-demo.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"
