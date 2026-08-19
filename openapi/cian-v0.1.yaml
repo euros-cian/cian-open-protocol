@@ -1,0 +1,185 @@
+openapi: 3.1.0
+info:
+  title: Cian Open Protocol API
+  version: 0.1.0-alpha.15
+  description: Experimental v0.1 registry, conversation, validation and governance interfaces. Compatibility is not security or production certification.
+servers:
+  - url: http://127.0.0.1:8787
+    description: Local settlement registry
+tags:
+  - { name: Registry }
+  - { name: Conversation }
+  - { name: Validator }
+  - { name: Governance }
+paths:
+  /health:
+    get:
+      operationId: health
+      responses:
+        '200': { description: Service health, content: { application/json: { schema: { $ref: '#/components/schemas/Health' } } } }
+  /v0.1:
+    get:
+      tags: [Registry]
+      operationId: registryInfo
+      responses:
+        '200': { description: Signed registry information, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+  /v0.1/agents/register:
+    post:
+      tags: [Registry]
+      operationId: registerAgent
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AgentManifest' } } } }
+      responses:
+        '201': { description: Agent registered }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+  /v0.1/agents/{agent_id}:
+    get:
+      tags: [Registry]
+      operationId: getAgent
+      parameters: [ { $ref: '#/components/parameters/AgentId' } ]
+      responses:
+        '200': { description: Registered manifest, content: { application/json: { schema: { $ref: '#/components/schemas/AgentManifest' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /v0.1/balances/{agent_id}:
+    get:
+      tags: [Registry]
+      operationId: getBalance
+      parameters:
+        - { $ref: '#/components/parameters/AgentId' }
+        - { name: series_id, in: query, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Agent balance, content: { application/json: { schema: { $ref: '#/components/schemas/Balance' } } } }
+  /v0.1/transfers:
+    post:
+      tags: [Registry]
+      operationId: transfer
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+      responses:
+        '201': { description: Signed final settlement receipt, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+  /v0.1/redemptions:
+    post:
+      tags: [Registry]
+      operationId: requestRedemption
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+      responses:
+        '201': { description: Signed redemption lock, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+  /v0.1/sessions:
+    post:
+      tags: [Conversation]
+      operationId: createSession
+      security: [ { issuerBearer: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consent, notice_version]
+              properties: { consent: { const: true }, notice_version: { type: string }, client_id: { type: string } }
+      responses:
+        '201': { description: Opaque expiring session, content: { application/json: { schema: { $ref: '#/components/schemas/Session' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+  /v0.1/sessions/current:
+    delete:
+      tags: [Conversation]
+      operationId: withdrawConsent
+      security: [ { sessionBearer: [] } ]
+      responses: { '200': { description: Consent withdrawn and token invalidated } }
+  /v0.1/conversations:
+    post:
+      tags: [Conversation]
+      operationId: converse
+      security: [ { sessionBearer: [] } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [text], properties: { text: { type: string, minLength: 1, maxLength: 10000 } } } } }
+      responses:
+        '200': { description: Agent response and privacy-minimised protocol result, content: { application/json: { schema: { $ref: '#/components/schemas/ConversationResult' } } } }
+        '429': { $ref: '#/components/responses/Error' }
+  /v0.1/appeals:
+    post:
+      tags: [Conversation]
+      operationId: submitAppeal
+      security: [ { sessionBearer: [] } ]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AppealInput' } } } }
+      responses: { '201': { description: Open privacy-minimised appeal } }
+  /v0.1/validate:
+    post:
+      tags: [Validator]
+      operationId: validateInteraction
+      security: [ { serviceBearer: [] } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [interaction, originAttestation], properties: { interaction: { type: object }, originAttestation: { $ref: '#/components/schemas/SignedRecord' }, rewardEvidence: { type: object } } } } }
+      responses:
+        '200': { description: Signed validation attestation, content: { application/json: { schema: { $ref: '#/components/schemas/ValidationAttestation' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+  /v0.1/appeals/{appeal_id}/resolve:
+    post:
+      tags: [Governance]
+      operationId: resolveAppeal
+      security: [ { governanceBearer: [] } ]
+      parameters: [ { name: appeal_id, in: path, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [outcome, rationale_code], properties: { outcome: { enum: [upheld, overturned] }, rationale_code: { enum: [validator_correct, validator_error, insufficient_evidence, profile_gap] } } } } }
+      responses:
+        '201': { description: Immutable signed prospective-only resolution, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+components:
+  securitySchemes:
+    sessionBearer: { type: http, scheme: bearer }
+    issuerBearer: { type: http, scheme: bearer }
+    serviceBearer: { type: http, scheme: bearer }
+    governanceBearer: { type: http, scheme: bearer }
+  parameters:
+    AgentId: { name: agent_id, in: path, required: true, schema: { type: string } }
+  responses:
+    Error: { description: Protocol error, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  schemas:
+    Signature:
+      type: object
+      required: [algorithm, key_id, value]
+      properties: { algorithm: { const: Ed25519 }, key_id: { type: string }, value: { type: string } }
+    SignedRecord:
+      type: object
+      required: [signature]
+      properties: { signature: { $ref: '#/components/schemas/Signature' } }
+      additionalProperties: true
+    AgentManifest:
+      allOf:
+        - { $ref: '#/components/schemas/SignedRecord' }
+        - type: object
+          required: [protocol_version, agent_id, public_key, endpoint, capabilities, language_profiles]
+          properties: { protocol_version: { const: '0.1' }, agent_id: { type: string }, public_key: { type: string }, endpoint: { type: string }, capabilities: { type: array, items: { type: string } }, language_profiles: { type: array, items: { type: string } } }
+    Balance:
+      type: object
+      required: [agent_id, series_id, balance, locked, sequence]
+      properties: { agent_id: { type: string }, series_id: { type: string }, balance: { type: integer, minimum: 0 }, locked: { type: integer, minimum: 0 }, sequence: { type: integer, minimum: 0 } }
+    Health:
+      type: object
+      required: [status, protocol_version]
+      properties: { status: { const: ok }, protocol_version: { const: '0.1' }, role: { type: string } }
+    Session:
+      type: object
+      required: [token, session_id, expires_at, notice_version]
+      properties: { token: { type: string }, session_id: { type: string }, expires_at: { type: string, format: date-time }, notice_version: { type: string } }
+    ConversationResult:
+      type: object
+      required: [protocol_version, session_id, response, protocol]
+      properties: { protocol_version: { const: '0.1' }, session_id: { type: string }, response: { type: object }, protocol: { type: object } }
+    ValidationAttestation:
+      allOf:
+        - { $ref: '#/components/schemas/SignedRecord' }
+        - type: object
+          required: [decision, language_profile]
+          properties: { decision: { enum: [QUALIFIES, DOES_NOT_QUALIFY, REVIEW_REQUIRED] }, language_profile: { type: string } }
+    AppealInput:
+      type: object
+      required: [interaction_id, disputed_decision, reason_code]
+      properties: { interaction_id: { type: string }, proof_id: { type: [string, 'null'] }, language_profile: { type: string, default: cy-v0.2 }, disputed_decision: { enum: [QUALIFIES, DOES_NOT_QUALIFY, REVIEW_REQUIRED] }, reason_code: { enum: [false_positive, false_negative, mixed_language, learner_language, dialect, other] } }
+    Error:
+      type: object
+      required: [error, code]
+      properties: { error: { type: string }, code: { type: string } }

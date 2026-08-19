@@ -24,7 +24,7 @@ async function jsonRequest(url, options = {}) {
 }
 
 export class AgentClient {
-  constructor({ registryUrl, registryPublicKeyPem, agentId, publicKeyPem, privateKeyPem, endpoint, capabilities = [], languageProfiles = ["cy-v0.1"] }) {
+  constructor({ registryUrl, registryPublicKeyPem, agentId, publicKeyPem, privateKeyPem, endpoint, capabilities = [], languageProfiles = ["cy-v0.2"] }) {
     this.registryUrl = registryUrl.replace(/\/$/, "");
     this.registryPublicKeyPem = registryPublicKeyPem;
     this.agentId = agentId;
@@ -35,7 +35,7 @@ export class AgentClient {
     this.languageProfiles = languageProfiles;
   }
 
-  static create({ registryUrl, registryPublicKeyPem, endpoint, capabilities = [], languageProfiles = ["cy-v0.1"] }) {
+  static create({ registryUrl, registryPublicKeyPem, endpoint, capabilities = [], languageProfiles = ["cy-v0.2"] }) {
     const { publicKey, privateKey } = generateAgentKeys();
     const publicKeyPem = exportPublicKey(publicKey);
     return new AgentClient({

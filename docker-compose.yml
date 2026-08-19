@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cian_protocol
+      POSTGRES_USER: cian
+      POSTGRES_PASSWORD: local-development-only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cian -d cian_protocol"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - cian-postgres:/var/lib/postgresql/data
+  registry:
+    build: .
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql://cian:local-development-only@postgres:5432/cian_protocol
+      CIAN_ADMIN_TOKEN: local-development-admin-only
+      CIAN_REGISTRY_KEY_PASSPHRASE: local-development-registry-passphrase
+      CIAN_REGISTRY_HOST: 0.0.0.0
+      CIAN_REGISTRY_PORT: 8787
+      CIAN_REGISTRY_CREDENTIALS: /app/secrets/registry.credentials.json
+    ports: ["8787:8787"]
+    volumes:
+      - cian-secrets:/app/secrets
+volumes:
+  cian-postgres:
+  cian-secrets:

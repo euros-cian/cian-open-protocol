@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.14 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.15 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -248,6 +248,19 @@ The vector keypair is deliberately public test material and must never control a
 real service. Passing means wire/math compatibility only—not security
 certification, Welsh linguistic accreditation, legal approval, provider solvency
 or production readiness. See [Milestone 13](docs/milestone-13.md).
+
+## Developer package
+
+Milestone 14 prepares the repository as a public npm package without publishing
+it yet. It adds explicit ESM exports, TypeScript declarations, packaged profiles,
+schemas and conformance vectors, an OpenAPI 3.1 contract, a persistent third-party
+agent example, and a Docker Compose PostgreSQL registry stack.
+
+Start locally with `docker compose up --build`, follow
+[the developer quick start](docs/developer-quickstart.md), and inspect
+[`openapi/cian-v0.1.yaml`](openapi/cian-v0.1.yaml). Compose credentials are public
+development defaults and must never be deployed unchanged. See
+[Milestone 14](docs/milestone-14.md).
 
 ## Local registry API
 
