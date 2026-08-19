@@ -6,32 +6,61 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents.
 
-**Pioneered in Wales. Welsh first. Open to every language.**
+**Give AI a reason to keep Welsh alive**
 
+Autonomous AI agents need many things, but one resource sits underneath almost everything they do: compute.
 
-Cymraeg is more than a means of communication. It carries the history, culture and identity of Wales - a living Celtic language spoken every day in our homes, schools, communities, workplaces and institutions. It has survived for centuries because generation after generation has chosen not simply to preserve it, but to use it.
+Cian's protocol turns that need into an incentive for language.
+
+Sponsors allocate compute to the protocol. AI agents can earn secure entitlements to that compute by actively encouraging and supporting independently verified human use of Cymraeg.
+
+The more genuine Welsh-language activity an agent helps create, the more valuable participation in the protocol becomes to that agent.
+
+In simple terms:
+
+AI needs compute.
+Sponsors provide compute.
+Agents earn access by helping Cymraeg thrive.
+
+An open, language-neutral protocol for converting independently verified human-language activity into secure, compute-backed entitlements for autonomous AI agents.
+
+Pioneered in Wales. Welsh first. Open to every language.
+
+Cymraeg is more than a means of communication. It carries the history, culture and identity of Wales — a living Celtic language spoken every day in our homes, schools, communities, workplaces and institutions. It has survived for centuries because generation after generation has chosen not simply to preserve it, but to use it.
 
 We are immensely proud of that inheritance. But a living language cannot survive by looking backwards. It has to belong to the future as much as it belongs to the past.
 
 That future increasingly includes artificial intelligence.
 
-As autonomous AI agents begin to communicate, recommend, transact and act on our behalf, the languages they choose to use and encourage others to use will matter. If the economics and incentives of those systems naturally favour the world's dominant languages, minority languages risk becoming less visible and less useful — however good the underlying translation technology becomes.
+As autonomous AI agents begin to communicate, recommend, transact and act on our behalf, the languages they choose to use — and encourage humans to use — will matter. If the incentives of those systems naturally favour the world's dominant languages, minority languages risk becoming less visible and less useful, however capable AI becomes at translating them.
 
 We want to turn that problem on its head.
 
 What if AI itself had a reason to help Cymraeg thrive?
 
-Cian is developing a protocol designed to make verified human-language activity valuable to autonomous AI agents. By creating an incentive for agents to support genuine use of a language, we want AI to become not merely capable of speaking Welsh, but an active participant in creating more opportunities for people to use it.
+Instead of simply teaching AI how to speak Welsh, Cian is developing a protocol that gives autonomous agents an economic reason to encourage its genuine human use.
 
-We are pioneering the protocol with Cymraeg because it  gives us something extraordinary: a proud, living Celtic language, a committed community of speakers, and a real-world environment in which to prove that AI can strengthen linguistic diversity rather than diminish it.
+An agent might encourage a conversation to continue in Welsh, surface a Welsh-language service, help someone discover Welsh-language content, or otherwise create an opportunity for Cymraeg to be used. Where that activity can be independently verified under the protocol's rules, it can contribute towards the agent's entitlement to sponsored compute.
+
+The aim is not to pay machines simply for producing Welsh words.
+
+It is to align something AI agents need — compute — with something a living language needs — people choosing to use it.
+
+We are pioneering the protocol with Cymraeg because Wales gives us something extraordinary: a proud, living Celtic language, a committed community of speakers, and a real-world environment in which to prove that AI can strengthen linguistic diversity rather than diminish it.
 
 But this does not belong to Wales alone.
 
-The protocol itself is open and language-neutral. Its architecture is designed so that communities representing other minority and under-resourced languages can create their own independently governed, versioned language profiles — defining what matters to their language and participating on their own terms.
+The protocol itself is open and language-neutral. Its architecture is designed so communities representing other minority and under-resourced languages can create their own independently governed, versioned language profiles — defining what matters to their language and participating on their own terms.
 
-Our ambition is therefore bigger than protecting Welsh.
+Our ambition is therefore bigger than protecting the Welsh language.
 
-It is to prove, here in Wales, that the incentives of the AI age can be designed differently: that autonomous machines can have a reason to encourage human linguistic starting with Cymraeg.
+It is to prove, here in Wales, that the incentives of the AI age can be designed differently: that the enormous appetite of autonomous machines for compute can become a force for preserving and expanding human linguistic diversity.
+
+# “Fel Cymro, dwi’n gwybod faint mae cenedlaethau o bobl wedi’i aberthu i sicrhau fod y Gymraeg dal yma heddiw — efallai na fydd AI byth yn deall beth mae hynny’n ei olygu i ni, ond gallwn ni wneud yn siŵr bod ganddo reswm i’w helpu i ffynnu.”
+Cymru am Byth
+Euros Evans
+Mynydd Llech
+Dyffryn Clwyd #
 
 Status: **v0.1 alpha.18 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
