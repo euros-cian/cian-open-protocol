@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.16",
+  "version": "0.1.0-alpha.17",
   "packageManager": "pnpm@11.19.0",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
@@ -23,11 +23,15 @@
     "schemas/",
     "conformance/",
     "evaluation/",
+    "release/",
     "database/",
     "openapi/",
     "scripts/validate-openapi.mjs",
+    "scripts/check-public-alpha.mjs",
     "docs/developer-quickstart.md",
     "docs/milestone-15.md",
+    "docs/milestone-16.md",
+    "docs/threat-model.md",
     "examples/third-party-agent.mjs",
     "examples/prepare-welsh-review.mjs",
     "LICENSE",
@@ -68,7 +72,8 @@
     "conformance": "node conformance/run.mjs",
     "pack:check": "pnpm pack --dry-run",
     "demo:third-party-agent": "node examples/third-party-agent.mjs",
-    "openapi:check": "node scripts/validate-openapi.mjs"
+    "openapi:check": "node scripts/validate-openapi.mjs",
+    "release:check": "node scripts/check-public-alpha.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"

@@ -11,3 +11,7 @@ a private reporting route; do not disclose exploit details publicly.
 Production deployments require durable transactional storage, protected signing
 keys, independent validators, rate limits, audit journals, recovery procedures,
 provider assurance, privacy review and external security testing.
+
+The maintained trust boundaries and known gaps are documented in
+[`docs/threat-model.md`](docs/threat-model.md). A passing conformance report is
+not a security assessment and must not be represented as one.

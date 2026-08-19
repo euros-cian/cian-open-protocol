@@ -24,3 +24,4 @@ jobs:
       - run: pnpm conformance
       - run: pnpm openapi:check
       - run: pnpm pack:check
+      - run: pnpm audit --prod --audit-level high

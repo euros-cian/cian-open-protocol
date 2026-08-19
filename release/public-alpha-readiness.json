@@ -1,0 +1,17 @@
+{
+  "$schema": "./public-alpha-readiness.schema.json",
+  "release": "0.1.0-alpha.17",
+  "status": "blocked",
+  "gates": [
+    { "id": "automated_tests", "required": true, "complete": true, "evidence": "npm test" },
+    { "id": "protocol_conformance", "required": true, "complete": true, "evidence": "npm run conformance" },
+    { "id": "package_review", "required": true, "complete": true, "evidence": "npm run pack:check" },
+    { "id": "openapi_validation", "required": true, "complete": true, "evidence": "npm run openapi:check" },
+    { "id": "independent_welsh_review", "required": true, "complete": false, "evidence": "npm run review:welsh:prepare" },
+    { "id": "external_security_assessment", "required": true, "complete": false, "evidence": null },
+    { "id": "production_key_custody", "required": true, "complete": false, "evidence": null },
+    { "id": "privacy_and_legal_review", "required": true, "complete": false, "evidence": null },
+    { "id": "incident_response_owner", "required": true, "complete": false, "evidence": null },
+    { "id": "npm_scope_ownership_confirmed", "required": true, "complete": false, "evidence": null }
+  ]
+}

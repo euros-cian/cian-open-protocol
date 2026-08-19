@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.16 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.17 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -273,6 +273,15 @@ The current seed corpus remains unreviewed, so the command correctly reports
 `independent_review_complete: false` and `production_claim_allowed: false`.
 No linguistic accreditation or accuracy claim is made until genuine reviews are
 returned. See [Milestone 15](docs/milestone-15.md).
+
+## Public-alpha security gate
+
+Run `npm run release:check` to inspect the machine-readable publication gates.
+The command currently returns `BLOCKED` by design: independent Welsh review,
+external security assessment, production key custody, privacy/legal review,
+incident ownership and npm scope confirmation still require evidence. No package
+or network service should be publicly released by bypassing these gates. See the
+[threat model](docs/threat-model.md) and [Milestone 16](docs/milestone-16.md).
 
 ## Local registry API
 
