@@ -33,6 +33,7 @@
     "openapi/",
     "scripts/validate-openapi.mjs",
     "scripts/check-public-alpha.mjs",
+    "scripts/scan-secrets.mjs",
     "docs/developer-quickstart.md",
     "docs/milestone-15.md",
     "docs/milestone-16.md",
@@ -80,7 +81,8 @@
     "pack:check": "pnpm pack --dry-run",
     "demo:third-party-agent": "node examples/third-party-agent.mjs",
     "openapi:check": "node scripts/validate-openapi.mjs",
-    "release:check": "node scripts/check-public-alpha.mjs"
+    "release:check": "node scripts/check-public-alpha.mjs",
+    "security:scan": "node scripts/scan-secrets.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"
