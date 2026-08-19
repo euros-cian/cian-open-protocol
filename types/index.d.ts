@@ -58,6 +58,9 @@ export function createAppealResolution(input:Record<string,unknown>):SignedRecor
 export function evaluateRewardState(input:Record<string,boolean>):{id:string;weight:number};
 export function highestRewardState(states:Array<{id:string;weight:number}>):{id:string;weight:number};
 export function evaluateWelshCases(cases:unknown[],options?:Record<string,unknown>):Record<string,unknown>;
+export type WelshReview = { case_id:string; reviewer_id:string; decision:"QUALIFIES"|"DOES_NOT_QUALIFY"|"REVIEW_REQUIRED"; role:"reviewer"|"adjudicator"; reviewed_at?:string };
+export function createBlindReviewPacket(cases:Array<Record<string,unknown>>):Array<{case_id:string;text:string;category:string}>;
+export function assessWelshReview(options:{cases:Array<Record<string,unknown>>;reviews:WelshReview[];analyser:(text:string)=>{decision:string};profileId?:string;minimumReviewers?:number}):Record<string,unknown>;
 export function extractOutputText(response:unknown):string;
 export function encryptCredentials(credentials:unknown,passphrase:string):unknown;
 export function decryptCredentials(envelope:unknown,passphrase:string):unknown;

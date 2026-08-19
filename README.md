@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.15 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.16 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -261,6 +261,18 @@ Start locally with `docker compose up --build`, follow
 [`openapi/cian-v0.1.yaml`](openapi/cian-v0.1.yaml). Compose credentials are public
 development defaults and must never be deployed unchanged. See
 [Milestone 14](docs/milestone-14.md).
+
+## Independent Welsh review
+
+Run `npm run review:welsh:prepare` to create a blinded packet for fluent Welsh
+reviewers and a machine-readable calibration report. The packet deliberately
+omits provisional labels and validator outputs. At least two independent
+reviewers must label every case; disagreements require adjudication.
+
+The current seed corpus remains unreviewed, so the command correctly reports
+`independent_review_complete: false` and `production_claim_allowed: false`.
+No linguistic accreditation or accuracy claim is made until genuine reviews are
+returned. See [Milestone 15](docs/milestone-15.md).
 
 ## Local registry API
 

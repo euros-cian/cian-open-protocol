@@ -4,6 +4,7 @@
   "supersedes": "cy-v0.1",
   "language": { "tag": "cy", "name": "Cymraeg / Welsh" },
   "status": "experimental",
+  "independent_review_status": "awaiting_external_welsh_review",
   "minimum_human_origin_assurance": "H1",
   "decision_outputs": ["QUALIFIES", "DOES_NOT_QUALIFY", "REVIEW_REQUIRED"],
   "automation_policy": {
