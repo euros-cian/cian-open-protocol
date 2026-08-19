@@ -1,6 +1,6 @@
 # Cian Open Protocol
 
-<img src="public/brand/cian-ai.png" alt="Cian AI" width="180">
+<img src="public/brand/cian-ai-readme.png" alt="Cian AI" width="180">
 
 An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
