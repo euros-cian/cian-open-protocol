@@ -1,0 +1,25 @@
+name: Protocol proposal
+description: Propose a versioned interoperability or governance change
+title: "[Protocol]: "
+labels: [protocol-proposal]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: Problem and affected communities }
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes: { label: Proposed normative behavior }
+    validations: { required: true }
+  - type: textarea
+    id: compatibility
+    attributes: { label: Compatibility and migration impact }
+    validations: { required: true }
+  - type: textarea
+    id: risks
+    attributes: { label: Security, privacy, abuse and language-governance risks }
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes: { label: Tests, evidence and alternatives considered }
+    validations: { required: true }

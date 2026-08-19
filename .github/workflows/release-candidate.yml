@@ -1,0 +1,35 @@
+name: developer-preview-candidate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - package.json
+      - pnpm-lock.yaml
+      - release/**
+      - scripts/check-developer-preview.mjs
+      - .github/workflows/release-candidate.yml
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 11.19.0 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm developer:check
+      - run: pnpm security:scan
+      - run: pnpm test
+      - run: pnpm conformance
+      - run: pnpm openapi:check
+      - run: pnpm pack:check
+      - run: pnpm audit --prod --audit-level high
+      - run: echo "Candidate verified; publication remains blocked by release/public-alpha-readiness.json."
