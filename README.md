@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.12 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.13 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -225,6 +225,17 @@ For a no-credentials visual preview using clearly labelled deterministic mock
 records, run `npm run demo:cockpit-preview` and open
 `http://127.0.0.1:8793/demo`. Use the port 8790 pilot mode to demonstrate real
 OpenAI, validator and PostgreSQL activity.
+
+## Scalable tri-state Welsh validation
+
+The live pilot now uses experimental profile `cy-v0.2`. It adds contextual phrase
+and distinctive lexical evidence plus three automatic outcomes: `QUALIFIES`,
+`DOES_NOT_QUALIFY`, and `REVIEW_REQUIRED`. The third outcome is automated
+abstention—not a real-time human queue. Conversation continues normally, but no
+proof is issued when evidence is uncertain.
+
+`cy-v0.1` remains frozen for compatibility. Run `npm run eval:welsh:v2` for the
+new provisional regression corpus. See [Milestone 12](docs/milestone-12.md).
 
 ## Local registry API
 

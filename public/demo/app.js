@@ -17,7 +17,7 @@ function message(text, type) {
 }
 function evidence(protocol) {
   const rows = [
-    ["Decision", protocol.decision], ["Reward state", protocol.reward_state],
+    ["Decision", protocol.decision], ["Language profile", protocol.language_profile], ["Reward state", protocol.reward_state],
     ["Interaction", protocol.interaction_id], ["SHA-256 digest", protocol.interaction_digest],
     ["Origin attestation", protocol.origin_attestation_id], ["Validator", protocol.validator_id],
     ["Validation attestation", protocol.validation_attestation_id], ["Language Proof", protocol.proof_id ?? "No proof issued"],

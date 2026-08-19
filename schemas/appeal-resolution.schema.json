@@ -9,7 +9,7 @@
     "appeal_id": { "type": "string", "pattern": "^appeal:" },
     "interaction_id": { "type": "string", "minLength": 1 },
     "language_profile": { "type": "string", "minLength": 1 },
-    "disputed_decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY"] },
+    "disputed_decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY", "REVIEW_REQUIRED"] },
     "outcome": { "enum": ["upheld", "overturned"] },
     "rationale_code": { "enum": ["validator_correct", "validator_error", "insufficient_evidence", "profile_gap"] },
     "reviewer_id": { "type": "string", "minLength": 1 },

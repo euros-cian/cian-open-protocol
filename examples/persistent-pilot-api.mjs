@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import {
   AgentClient, ConversationalProtocolAgent, InteractionGateway, LanguageProofController, PostgresAppealStore,
   OpenAIResponsesProvider, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry,
-  RemoteWelshValidator, WelshValidator, createConversationServer, createSigningService
+  RemoteWelshValidator, WelshValidatorV2, createConversationServer, createSigningService
 } from "../src/index.js";
 
 const required = ["OPENAI_API_KEY", "CIAN_DATABASE_URL", "CIAN_PILOT_KEY_PASSPHRASE", "CIAN_SESSION_ISSUER_TOKEN"];
@@ -32,7 +32,7 @@ if (missing.length) {
   const identity = AgentClient.createPersistent({
     credentialsPath: credential("agent"), passphrase: process.env.CIAN_PILOT_KEY_PASSPHRASE,
     registryUrl: "http://local.postgres", endpoint: "pilot:openai-agent",
-    capabilities: ["conversation"], languageProfiles: ["cy-v0.1"]
+    capabilities: ["conversation"], languageProfiles: ["cy-v0.1", "cy-v0.2"]
   });
   await registry.registerAgent(identity.manifest());
   const agent = new ConversationalProtocolAgent({
@@ -43,7 +43,7 @@ if (missing.length) {
     gateway: new InteractionGateway({ signer: gatewaySigner }),
     validator: independentValidator
       ? new RemoteWelshValidator({ url: process.env.CIAN_VALIDATOR_URL, apiToken: process.env.CIAN_VALIDATOR_API_TOKEN })
-      : new WelshValidator({ signer: validatorSigner }),
+      : new WelshValidatorV2({ signer: validatorSigner }),
     proofController: new LanguageProofController({
       signer: proofSigner,
       trustedGateways: [[gatewaySigner.keyId, gatewaySigner.publicKeyPem]],

@@ -94,6 +94,7 @@ export function createConversationServer({
             interaction_digest: result.origin_attestation.interaction_digest,
             validation_attestation_id: result.validation.attestation_id,
             validator_id: result.validation.validator_id,
+            language_profile: result.validation.language_profile,
             decision: result.validation.decision, reward_state: result.validation.reward_state,
             proof_id: result.proof?.proof_id ?? null,
             persistence: result.proof ? "postgresql" : "no_proof"

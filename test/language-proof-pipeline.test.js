@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   EpochController, InMemoryProofStore, InteractionGateway, LanguageProofController,
-  SettlementRegistry, WelshValidator, analyseWelsh, createSigningService,
+  SettlementRegistry, WelshValidator, WelshValidatorV2, analyseWelsh, analyseWelshV2, createSigningService,
   evaluateRewardState
 } from "../src/index.js";
 
@@ -10,6 +10,27 @@ test("Welsh profile requires substantive lexical and corroborating evidence", ()
   assert.equal(analyseWelsh("Helo, dw i eisiau gwneud y gwaith hwn yn Gymraeg, diolch.").decision, "QUALIFIES");
   assert.equal(analyseWelsh("The chilly llama watched the show.").decision, "DOES_NOT_QUALIFY");
   assert.equal(analyseWelsh("ŵ ŵ ŵ").decision, "DOES_NOT_QUALIFY");
+});
+
+test("cy-v0.2 qualifies contextual greetings and abstains on uncertain mentions", () => {
+  assert.equal(analyseWelshV2("so bore da cian").decision, "QUALIFIES");
+  assert.equal(analyseWelshV2("Bore da").decision, "QUALIFIES");
+  assert.equal(analyseWelshV2("I visited Cymru and bought a map.").decision, "REVIEW_REQUIRED");
+  assert.equal(analyseWelshV2("The phrase bore da means good morning.").decision, "REVIEW_REQUIRED");
+  assert.equal(analyseWelshV2("Please help me finish this task.").decision, "DOES_NOT_QUALIFY");
+});
+
+test("cy-v0.2 validator signs its profile and uncertain cases issue no reward state", () => {
+  const signer = createSigningService({ serviceId: "validator:cy-v2-test" });
+  const validator = new WelshValidatorV2({ signer });
+  const gatewaySigner = createSigningService({ serviceId: "gateway:cy-v2-test" });
+  const received = new InteractionGateway({ signer: gatewaySigner }).receive({
+    text: "Helo.", recipientAgentId: "agent:test"
+  });
+  const validation = validator.validate({ interaction: received.interaction, originAttestation: received.attestation });
+  assert.equal(validation.language_profile, "cy-v0.2");
+  assert.equal(validation.decision, "REVIEW_REQUIRED");
+  assert.equal(validation.reward_state, "not_qualified");
 });
 
 test("reward evaluation applies only the highest state", () => {

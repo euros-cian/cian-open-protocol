@@ -13,7 +13,7 @@ const service = createConversationServer({
       return {
         response: { text: qualifies ? "Wrth gwrs — gallwn barhau yn Gymraeg." : "Hello — try adding a substantive Welsh phrase.", provider: "offline-preview", model: "deterministic-mock" },
         origin_attestation: { interaction_id: interactionId, attestation_id: `origin:${randomUUID()}`, interaction_digest: interactionDigest },
-        validation: { attestation_id: `validation:${randomUUID()}`, validator_id: "validator:cy:preview", decision: qualifies ? "QUALIFIES" : "DOES_NOT_QUALIFY", reward_state: qualifies ? "welsh_use" : "not_qualified" },
+        validation: { attestation_id: `validation:${randomUUID()}`, validator_id: "validator:cy:preview", language_profile: "cy-v0.2", decision: qualifies ? "QUALIFIES" : "DOES_NOT_QUALIFY", reward_state: qualifies ? "welsh_use" : "not_qualified" },
         proof: qualifies ? { proof_id: digest({ interaction_id: interactionId }).replace("sha256:", "proof:") } : null
       };
     }

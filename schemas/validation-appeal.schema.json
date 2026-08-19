@@ -8,7 +8,7 @@
     "interaction_id": { "type": "string", "minLength": 1 },
     "proof_id": { "type": ["string", "null"] },
     "language_profile": { "type": "string", "minLength": 1 },
-    "disputed_decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY"] },
+    "disputed_decision": { "enum": ["QUALIFIES", "DOES_NOT_QUALIFY", "REVIEW_REQUIRED"] },
     "reason_code": { "enum": ["false_positive", "false_negative", "mixed_language", "learner_language", "dialect", "other"] },
     "status": { "enum": ["open", "under_review", "upheld", "overturned", "closed"] },
     "submitted_at": { "type": "string", "format": "date-time" },

@@ -12,7 +12,7 @@ export { createRegistrySigner } from "./registry-signer.js";
 export { PostgresSettlementRegistry } from "./postgres-registry.js";
 export { createSigningService } from "./signing-service.js";
 export { InteractionGateway } from "./gateway.js";
-export { analyseWelsh, WelshValidator } from "./welsh-validator.js";
+export { analyseWelsh, analyseWelshV2, WelshValidator, WelshValidatorV2 } from "./welsh-validator.js";
 export { evaluateRewardState, highestRewardState } from "./reward-evaluator.js";
 export { LanguageProofController } from "./proof-controller.js";
 export { InMemoryProofStore, PostgresProofStore } from "./proof-store.js";

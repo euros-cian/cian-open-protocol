@@ -1,0 +1,10 @@
+{"case_id":"cy2-seed-001","text":"so bore da cian","expected_decision":"QUALIFIES","category":"mixed_short_greeting","review_status":"unreviewed"}
+{"case_id":"cy2-seed-002","text":"Bore da","expected_decision":"QUALIFIES","category":"short_greeting","review_status":"unreviewed"}
+{"case_id":"cy2-seed-003","text":"Nos da a diolch yn fawr.","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}
+{"case_id":"cy2-seed-004","text":"Helo I am learning Cymraeg and need help.","expected_decision":"QUALIFIES","category":"learner_mixed_language","review_status":"unreviewed"}
+{"case_id":"cy2-seed-005","text":"I visited Cymru and bought a map.","expected_decision":"REVIEW_REQUIRED","category":"named_entity","review_status":"unreviewed"}
+{"case_id":"cy2-seed-006","text":"The phrase bore da means good morning.","expected_decision":"REVIEW_REQUIRED","category":"quoted_welsh","review_status":"unreviewed"}
+{"case_id":"cy2-seed-007","text":"Helo.","expected_decision":"REVIEW_REQUIRED","category":"insufficient_context","review_status":"unreviewed"}
+{"case_id":"cy2-seed-008","text":"Please help me finish this task today.","expected_decision":"DOES_NOT_QUALIFY","category":"english","review_status":"unreviewed"}
+{"case_id":"cy2-seed-009","text":"The chilly llama watched the show.","expected_decision":"DOES_NOT_QUALIFY","category":"orthographic_trap","review_status":"unreviewed"}
+{"case_id":"cy2-seed-010","text":"Helo, hoffwn wneud y dasg hon yn Gymraeg.","expected_decision":"QUALIFIES","category":"standard_welsh","review_status":"unreviewed"}

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { createAppealResolution } from "./appeal-review.js";
 
 const REASONS = new Set(["false_positive", "false_negative", "mixed_language", "learner_language", "dialect", "other"]);
-const DECISIONS = new Set(["QUALIFIES", "DOES_NOT_QUALIFY"]);
+const DECISIONS = new Set(["QUALIFIES", "DOES_NOT_QUALIFY", "REVIEW_REQUIRED"]);
 
 function appealRecord({ sessionId, input, now }) {
   if (!input?.interaction_id || !DECISIONS.has(input.disputed_decision) || !REASONS.has(input.reason_code)) {

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { WelshValidator, createSigningService, createValidatorServer } from "../src/index.js";
+import { WelshValidatorV2, createSigningService, createValidatorServer } from "../src/index.js";
 
 const passphrase = process.env.CIAN_VALIDATOR_KEY_PASSPHRASE;
 const apiToken = process.env.CIAN_VALIDATOR_API_TOKEN;
@@ -14,7 +14,7 @@ if (!passphrase || !apiToken) {
   });
   const gatewayPublicKey = readFileSync(join(directory, "gateway-public.pem"), "utf8");
   const service = createValidatorServer({
-    validator: new WelshValidator({ signer }), apiToken,
+    validator: new WelshValidatorV2({ signer }), apiToken,
     trustedGateways: [["gateway:cy:pilot#key-1", gatewayPublicKey]]
   });
   const address = await service.listen({ host: "127.0.0.1", port: Number(process.env.CIAN_VALIDATOR_PORT ?? 8791) });
