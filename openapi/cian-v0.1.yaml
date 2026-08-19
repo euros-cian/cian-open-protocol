@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Cian Open Protocol API
-  version: 0.1.0-alpha.24
+  version: 0.1.0-alpha.25
   description: Experimental v0.1 registry, conversation, validation and governance interfaces. Compatibility is not security or production certification.
 servers:
   - url: http://127.0.0.1:8787
@@ -102,6 +102,14 @@ paths:
       security: [ { computeAdminBearer: [] } ]
       parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } } ]
       responses: { '200': { description: Provider resumed for new claims }, '401': { $ref: '#/components/responses/Error' }, '404': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/admin/providers/{provider_id}/rotate-token:
+    post:
+      tags: [Compute]
+      operationId: rotateComputeProviderToken
+      security: [ { computeAdminBearer: [] } ]
+      parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } } ]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [api_token], properties: { api_token: { type: string, minLength: 32 } } } } } }
+      responses: { '200': { description: Provider token rotated and old token immediately invalidated }, '401': { $ref: '#/components/responses/Error' }, '404': { $ref: '#/components/responses/Error' }, '429': { description: Request rate limited } }
   /v0.1/compute/jobs:
     post:
       tags: [Compute]

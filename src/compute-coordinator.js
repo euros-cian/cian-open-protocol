@@ -26,6 +26,7 @@ export class ComputeCoordinator {
   async claim(providerId){return this.store.claim(providerId,{leaseMs:this.leaseMs});}
   async suspendProvider(providerId,reasonCode){if(typeof reasonCode!=="string"||!/^[a-z0-9._-]{3,64}$/i.test(reasonCode))throw new Error("valid suspension reason_code is required");return this.store.suspendProvider(providerId,reasonCode);}
   async resumeProvider(providerId){return this.store.resumeProvider(providerId);}
+  async rotateProviderToken(providerId,apiToken){if(typeof apiToken!=="string"||apiToken.length<32)throw new Error("provider API token must contain at least 32 characters");return this.store.rotateProviderToken(providerId,apiToken);}
   async operations(){const snapshot=await this.store.operations();const alerts=[];if(snapshot.jobs.queued>this.queueAlertThreshold)alerts.push({code:"QUEUE_BACKLOG",severity:"warning",count:snapshot.jobs.queued});if(snapshot.expired_leases>0)alerts.push({code:"EXPIRED_LEASES",severity:"critical",count:snapshot.expired_leases});const suspended=snapshot.providers.filter(provider=>provider.status==="suspended").length;if(suspended)alerts.push({code:"PROVIDERS_SUSPENDED",severity:"warning",count:suspended});return{protocol_version:"0.1",generated_at:this.now().toISOString(),...snapshot,alerts};}
   async complete(providerId,jobId,{result,receipt}){
     const job=await this.store.job(jobId); if(!job || job.status!=="running" || job.provider_id!==providerId) throw new Error("job is not running for provider");
