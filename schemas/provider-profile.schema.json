@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.cian.ai/schemas/provider-profile.schema.json",
+  "type": "object",
+  "required": ["protocol_version", "provider_id", "organisation", "contact", "resource_class", "nominal_capacity", "assurance_ppm", "availability_ppm", "reserve_ppm", "redemption_endpoint"],
+  "properties": {
+    "protocol_version": { "const": "0.1" },
+    "provider_id": { "type": "string", "pattern": "^provider:[A-Za-z0-9][A-Za-z0-9:._-]{2,127}$" },
+    "organisation": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "contact": { "type": "string", "minLength": 3, "maxLength": 320 },
+    "resource_class": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+    "nominal_capacity": { "type": "integer", "minimum": 1 },
+    "assurance_ppm": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "availability_ppm": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "reserve_ppm": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "redemption_endpoint": { "type": "string", "format": "uri" }
+  },
+  "additionalProperties": false
+}

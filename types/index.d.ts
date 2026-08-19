@@ -47,6 +47,9 @@ export class ComputeCoordinator { constructor(options:{registry:SettlementRegist
 export function createExecutionReceipt(input:Record<string,unknown>):SignedRecord;
 export class RemoteComputeProviderClient { constructor(options:{url:string;apiToken:string;signer:Record<string,unknown>;resourceClass?:string;fetchImpl?:typeof fetch}); claim():Promise<Record<string,unknown>|null>; complete(job:Record<string,unknown>,result:Record<string,unknown>):Promise<Record<string,unknown>>; fail(job:Record<string,unknown>,options?:{reasonCode?:string;retryable?:boolean}):Promise<Record<string,unknown>>; runOnce(executor:(workload:Record<string,unknown>,job:Record<string,unknown>)=>Promise<Record<string,unknown>>):Promise<Record<string,unknown>|null> }
 export function createComputePoolServer(options:{coordinator:ComputeCoordinator;store:InMemoryComputeJobStore|PostgresComputeJobStore;adminToken:string}):{listen(options?:{host?:string;port?:number}):Promise<string>;close():Promise<void>;server:unknown};
+export function validateProviderProfile(profile:Record<string,unknown>):Record<string,unknown>;
+export function createProviderOnboardingBundle(options:{profile:Record<string,unknown>;credentialsPath:string;passphrase:string;availableFrom:string;availableUntil:string;now?:()=>Date}):Record<string,unknown>;
+export function createSafeComputeExecutor(options?:{maxInputBytes?:number}):(workload:Record<string,unknown>)=>Promise<Record<string,unknown>>;
 export class WelshValidator { constructor(options:Record<string,unknown>); validate(input:Record<string,unknown>):ValidationAttestation }
 export class WelshValidatorV2 extends WelshValidator {}
 export class RemoteWelshValidator { constructor(options:{url:string;apiToken:string;fetchImpl?:typeof fetch}); validate(input:Record<string,unknown>):Promise<ValidationAttestation> }

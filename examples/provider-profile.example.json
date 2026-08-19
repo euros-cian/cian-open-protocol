@@ -1,0 +1,12 @@
+{
+  "protocol_version": "0.1",
+  "provider_id": "provider:example:organisation",
+  "organisation": "Example Organisation",
+  "contact": "compute-operator@example.invalid",
+  "resource_class": "local.safe-job.v1",
+  "nominal_capacity": 10,
+  "assurance_ppm": 900000,
+  "availability_ppm": 900000,
+  "reserve_ppm": 800000,
+  "redemption_endpoint": "https://compute.example.invalid/cian"
+}

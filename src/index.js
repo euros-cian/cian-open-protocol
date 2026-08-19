@@ -9,6 +9,7 @@ export { ComputeCoordinator, createExecutionReceipt } from "./compute-coordinato
 export { InMemoryComputeJobStore, PostgresComputeJobStore } from "./compute-job-store.js";
 export { createComputePoolServer } from "./compute-server.js";
 export { RemoteComputeProviderClient } from "./remote-compute-provider.js";
+export { createProviderOnboardingBundle, createSafeComputeExecutor, validateProviderProfile } from "./provider-onboarding.js";
 export { SettlementRegistry } from "./registry.js";
 export { AgentClient } from "./sdk.js";
 export { createRegistryServer } from "./server.js";

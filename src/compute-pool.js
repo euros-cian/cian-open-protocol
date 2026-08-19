@@ -6,12 +6,13 @@ import { recognisedCapacity } from "./allocation.js";
 const MAX_INPUT_BYTES = 65_536;
 
 export class LocalComputeProvider {
-  constructor({ signer, resourceClass = "local.safe-job.v1", now = () => new Date() } = {}) {
+  constructor({ signer, resourceClass = "local.safe-job.v1", redemptionEndpoint, now = () => new Date() } = {}) {
     if (!signer?.sign || !signer?.publicKeyPem || !signer?.serviceId) throw new Error("provider signer is required");
     this.signer = signer;
     this.providerId = signer.serviceId;
     this.publicKeyPem = signer.publicKeyPem;
     this.resourceClass = resourceClass;
+    this.redemptionEndpoint = redemptionEndpoint ?? `local://${encodeURIComponent(this.providerId)}`;
     this.now = now;
   }
 
@@ -27,7 +28,7 @@ export class LocalComputeProvider {
       assurance_ppm: assurancePpm,
       availability_ppm: availabilityPpm,
       reserve_ppm: reservePpm,
-      redemption_endpoint: `local://${encodeURIComponent(this.providerId)}`
+      redemption_endpoint: this.redemptionEndpoint
     });
   }
 
