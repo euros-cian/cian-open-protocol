@@ -27,7 +27,8 @@ export class ComputeCoordinator {
   async complete(providerId,jobId,{result,receipt}){
     const job=await this.store.job(jobId); if(!job || job.status!=="running" || job.provider_id!==providerId) throw new Error("job is not running for provider");
     const provider=await this.store.provider(providerId);
-    if(!provider || !verifyRecord(receipt,importPublicKey(provider.public_key)) || receipt.job_id!==jobId || receipt.redemption_id!==job.redemption_id || receipt.provider_id!==providerId || receipt.holder_agent!==job.holder_agent || !job.resource_classes.includes(receipt.resource_class) || receipt.metered_quantity!==job.amount || receipt.status!=="verified" || digest(result)!==receipt.result_digest) throw new Error("provider execution receipt failed verification");
+    const commitment=await this.store.commitment(job.commitment_id);
+    if(!provider || !commitment || commitment.commitment.provider_id!==providerId || commitment.commitment.resource_class!==receipt.resource_class || !verifyRecord(receipt,importPublicKey(provider.public_key)) || receipt.job_id!==jobId || receipt.redemption_id!==job.redemption_id || receipt.provider_id!==providerId || receipt.holder_agent!==job.holder_agent || !job.resource_classes.includes(receipt.resource_class) || receipt.metered_quantity!==job.amount || receipt.status!=="verified" || digest(result)!==receipt.result_digest) throw new Error("provider execution receipt failed verification");
     if(this.store.completeAndRetire) return this.store.completeAndRetire(jobId,providerId,{result,receipt});
     const retirement=await this.registry.retire(job.redemption_id,receipt); const completed=await this.store.complete(jobId,providerId,{result,receipt}); return {job:completed,retirement};
   }

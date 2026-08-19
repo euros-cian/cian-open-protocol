@@ -99,6 +99,24 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   const computeLedger = await state.ledgerSummary(seriesId);
   assert.deepEqual({ circulating: computeLedger.circulating_total, retired: computeLedger.retired_total, valid: computeLedger.conservation_valid }, { circulating: 9, retired: 1, valid: true });
 
+  const raceWorkload = { kind: "sha256", text: "Un swydd, dau ddarparwr" };
+  const raceRedemption = await restartedA.redeem({ seriesId, amount: 1, workload: digest(raceWorkload), resourceClasses: ["local.safe-job.v1"] });
+  const secondProviderSigner = createSigningService({ serviceId: "provider:postgres-race-test" });
+  const secondProvider = new LocalComputeProvider({ signer: secondProviderSigner });
+  const secondCommitment = secondProvider.createCommitment({ nominalCapacity: 2, availableFrom: new Date(Date.now() - 60_000).toISOString(), availableUntil: new Date(Date.now() + 60_000).toISOString() });
+  await computeCoordinator.registerProvider({ commitment: secondCommitment, publicKeyPem: secondProviderSigner.publicKeyPem, apiToken: "postgres-race-provider-token-32-characters" });
+  const raceJob = await computeCoordinator.enqueue({ redemptionId: raceRedemption.request.redemption_id, workload: raceWorkload });
+  const raceClaims = await Promise.all([computeCoordinator.claim(providerSigner.serviceId), computeCoordinator.claim(secondProviderSigner.serviceId)]);
+  assert.equal(raceClaims.filter(Boolean).length, 1);
+  assert.equal(raceClaims.find(Boolean).job_id, raceJob.job_id);
+  const raceWinner = raceClaims.find(Boolean);
+  const raceSigner = raceWinner.provider_id === providerSigner.serviceId ? providerSigner : secondProviderSigner;
+  const raceResult = { kind: "sha256", digest: digest(raceWorkload.text) };
+  const raceReceipt = createExecutionReceipt({ signer: raceSigner, job: raceWinner, result: raceResult, resourceClass: "local.safe-job.v1" });
+  await computeCoordinator.complete(raceSigner.serviceId, raceWinner.job_id, { result: raceResult, receipt: raceReceipt });
+  const raceLedger = await state.ledgerSummary(seriesId);
+  assert.deepEqual({ circulating: raceLedger.circulating_total, retired: raceLedger.retired_total, valid: raceLedger.conservation_valid }, { circulating: 8, retired: 2, valid: true });
+
   const gatewaySigner = createSigningService({ serviceId: "gateway:postgres-test" });
   const validatorSigner = createSigningService({ serviceId: "validator:postgres-test" });
   const proofSigner = createSigningService({ serviceId: "proof:postgres-test" });

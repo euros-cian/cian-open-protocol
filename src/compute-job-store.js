@@ -29,6 +29,7 @@ export class InMemoryComputeJobStore {
   }
   async authenticate(providerId, apiToken) { return this.providers.get(providerId)?.token_digest === digest(apiToken); }
   async provider(providerId) { return clone(this.providers.get(providerId)); }
+  async commitment(commitmentId) { return clone(this.commitments.get(commitmentId)); }
   async enqueue(input) {
     if ([...this.jobs.values()].some(job => job.redemption_id === input.redemption_id)) throw new Error("redemption already queued");
     const stamp = this.now().toISOString();
@@ -78,6 +79,7 @@ export class PostgresComputeJobStore {
   }
   async authenticate(providerId, apiToken) { const result = await this.pool.query("SELECT token_digest = $2 AS valid FROM protocol_compute_providers WHERE provider_id = $1", [providerId, digest(apiToken)]); return Boolean(result.rows[0]?.valid); }
   async provider(providerId) { const result = await this.pool.query("SELECT provider_id, public_key FROM protocol_compute_providers WHERE provider_id = $1", [providerId]); return result.rowCount ? result.rows[0] : null; }
+  async commitment(commitmentId) { const result = await this.pool.query("SELECT commitment, recognised_capacity, remaining_capacity FROM protocol_compute_commitments WHERE commitment_id = $1", [commitmentId]); return result.rowCount ? { commitment: result.rows[0].commitment, recognised_capacity: Number(result.rows[0].recognised_capacity), remaining_capacity: Number(result.rows[0].remaining_capacity) } : null; }
   async enqueue(input) {
     const stamp = this.now(); const jobId = input.job_id ?? `job:${randomUUID()}`;
     const result = await this.pool.query(`INSERT INTO protocol_compute_jobs (job_id,redemption_id,holder_agent,series_id,amount,resource_classes,workload_digest,workload,status,max_attempts,created_at,updated_at)
