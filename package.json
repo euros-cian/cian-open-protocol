@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.17",
+  "version": "0.1.0-alpha.18",
   "packageManager": "pnpm@11.19.0",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
@@ -23,6 +23,7 @@
     "schemas/",
     "conformance/",
     "evaluation/",
+    "review-ui/",
     "release/",
     "database/",
     "openapi/",
@@ -34,6 +35,7 @@
     "docs/threat-model.md",
     "examples/third-party-agent.mjs",
     "examples/prepare-welsh-review.mjs",
+    "examples/welsh-review-cockpit.mjs",
     "LICENSE",
     "README.md",
     "SECURITY.md"
@@ -69,6 +71,7 @@
     "demo:cockpit-preview": "node examples/cockpit-preview.mjs",
     "eval:welsh:v2": "node examples/evaluate-welsh-v2.mjs",
     "review:welsh:prepare": "node examples/prepare-welsh-review.mjs",
+    "review:welsh:cockpit": "node examples/welsh-review-cockpit.mjs",
     "conformance": "node conformance/run.mjs",
     "pack:check": "pnpm pack --dry-run",
     "demo:third-party-agent": "node examples/third-party-agent.mjs",

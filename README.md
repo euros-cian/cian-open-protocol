@@ -4,7 +4,7 @@ An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents. Welsh first.
 
-Status: **v0.1 alpha.17 reference implementation**. This repository is experimental
+Status: **v0.1 alpha.18 reference implementation**. This repository is experimental
 software and a research protocol. It is not legal tender, a cryptoasset, a human
 investment product, or a promise of cash redemption.
 
@@ -273,6 +273,11 @@ The current seed corpus remains unreviewed, so the command correctly reports
 `independent_review_complete: false` and `production_claim_allowed: false`.
 No linguistic accreditation or accuracy claim is made until genuine reviews are
 returned. See [Milestone 15](docs/milestone-15.md).
+
+For a reviewer-friendly flow, set `CIAN_WELSH_REVIEWER_ID` to a stable
+pseudonymous identifier, run `npm run review:welsh:cockpit`, and open
+`http://127.0.0.1:8794`. The local cockpit never displays provisional labels or
+validator decisions and records only the selected label, reviewer ID and time.
 
 ## Public-alpha security gate
 

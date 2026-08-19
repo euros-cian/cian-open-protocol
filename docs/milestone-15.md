@@ -7,6 +7,9 @@ independent linguistic evidence.
 ## Workflow
 
 1. Run `npm run review:welsh:prepare`.
+   A reviewer can instead set a stable pseudonymous `CIAN_WELSH_REVIEWER_ID` and
+   run `npm run review:welsh:cockpit`, then use the loopback-only browser UI on
+   port 8794.
 2. Send `tmp/cy-v0.2-blind-review.json` independently to at least two fluent
    Welsh reviewers. Do not send provisional labels or validator output.
 3. Store returned decisions in `evaluation/cy-v0.2.reviews.jsonl`, following
