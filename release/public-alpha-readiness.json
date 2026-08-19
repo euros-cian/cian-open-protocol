@@ -12,6 +12,6 @@
     { "id": "production_key_custody", "required": true, "complete": false, "evidence": "assurance/production-key-custody-requirements.md prepared; provider/design pending" },
     { "id": "privacy_and_legal_review", "required": true, "complete": false, "evidence": "assurance/privacy-legal-review-brief.md prepared; qualified review pending" },
     { "id": "incident_response_owner", "required": true, "complete": true, "evidence": "Euros Evans named in assurance/incident-response-plan.md" },
-    { "id": "npm_scope_ownership_confirmed", "required": true, "complete": false, "evidence": "2026-08-19 registry E404; authenticated organisation control pending" }
+    { "id": "npm_scope_ownership_confirmed", "required": true, "complete": true, "evidence": "2026-08-19: authenticated npm user eurosevans confirmed as owner of cian-ai; package remains unpublished" }
   ]
 }
