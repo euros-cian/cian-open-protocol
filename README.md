@@ -10,8 +10,6 @@ AI agents.
 
 An open, language-neutral protocol for converting independently verified human-language activity into secure, compute-backed entitlements for autonomous AI agents.
 
-Pioneered in Wales. Welsh first. Open to every language.
-
 Cymraeg is more than a means of communication. It carries the history, culture and identity of Wales - a living Celtic language spoken every day in our homes, schools, communities, workplaces and institutions. It has survived for centuries because generation after generation has chosen not simply to preserve it, but to use it.
 
 We are immensely proud of that inheritance. But a living language cannot survive by looking backwards. It has to belong to the future as much as it belongs to the past.
