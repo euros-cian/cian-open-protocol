@@ -12,7 +12,8 @@ const migration = [
   readFileSync(new URL("../database/005-signed-appeal-resolutions.sql", import.meta.url), "utf8"),
   readFileSync(new URL("../database/006-tristate-validation.sql", import.meta.url), "utf8"),
   readFileSync(new URL("../database/007-compute-pool.sql", import.meta.url), "utf8"),
-  readFileSync(new URL("../database/008-compute-operations.sql", import.meta.url), "utf8")
+  readFileSync(new URL("../database/008-compute-operations.sql", import.meta.url), "utf8"),
+  readFileSync(new URL("../database/009-public-sandbox.sql", import.meta.url), "utf8")
 ].join("\n");
 
 function positiveAmount(amount) {

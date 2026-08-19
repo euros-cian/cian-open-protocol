@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.27",
+  "version": "0.1.0-alpha.28",
   "packageManager": "pnpm@11.19.0",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
@@ -48,6 +48,7 @@
     "docs/milestone-23.md",
     "docs/milestone-24.md",
     "docs/milestone-25.md",
+    "docs/milestone-26.md",
     "docs/developer-preview.md",
     "docs/compatibility-policy.md",
     "docs/provider-operator-guide.md",
@@ -116,6 +117,7 @@
     "demo:provider-onboarding": "node examples/provider-onboarding-demo.mjs",
     "demo:compute-operations": "node examples/compute-operations-demo.mjs",
     "demo:compute-security": "node examples/compute-security-demo.mjs",
+    "sandbox:start": "node examples/public-sandbox.mjs",
     "assurance:check": "node scripts/check-assurance-pack.mjs",
     "developer:check": "node scripts/check-developer-preview.mjs"
   },

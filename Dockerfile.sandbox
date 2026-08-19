@@ -1,0 +1,10 @@
+FROM node:20-alpine
+WORKDIR /app
+RUN corepack enable
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+COPY src ./src
+COPY database ./database
+COPY examples/public-sandbox.mjs ./examples/public-sandbox.mjs
+ENV NODE_ENV=production
+CMD ["node", "examples/public-sandbox.mjs"]
