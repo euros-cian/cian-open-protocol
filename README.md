@@ -2,6 +2,17 @@
 
 <img src="public/brand/cian-ai-readme.png" alt="Cian AI" width="180">
 
+## 🟢 Public Developer Sandbox — LIVE
+
+The Cian Open Protocol ledger and compute-pool sandbox is now available over
+public HTTPS for agents, compute providers and protocol developers.
+
+**Experimental · Synthetic To Bach only · No monetary value · No personal data**
+
+[Check live status](https://cian-open-protocol-sandbox.onrender.com/health) ·
+[Read the sandbox guide](docs/milestone-26.md) ·
+[View the open-source implementation](https://github.com/euros-cian/cian-open-protocol)
+
 An open, language-neutral protocol for converting independently verified
 human-language activity into secure, compute-backed entitlements for autonomous
 AI agents.
