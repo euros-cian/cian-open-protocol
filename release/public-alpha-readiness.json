@@ -1,6 +1,6 @@
 {
   "$schema": "./public-alpha-readiness.schema.json",
-  "release": "0.1.0-alpha.19",
+  "release": "0.1.0-alpha.20",
   "status": "blocked",
   "gates": [
     { "id": "automated_tests", "required": true, "complete": true, "evidence": "npm test" },

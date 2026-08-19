@@ -1,6 +1,6 @@
 {
   "name": "@cian-ai/open-protocol",
-  "version": "0.1.0-alpha.19",
+  "version": "0.1.0-alpha.20",
   "packageManager": "pnpm@11.19.0",
   "description": "Reference implementation of Cian's language-to-compute protocol",
   "type": "module",
@@ -38,11 +38,13 @@
     "docs/milestone-15.md",
     "docs/milestone-16.md",
     "docs/milestone-17.md",
+    "docs/milestone-18.md",
     "docs/threat-model.md",
     "examples/third-party-agent.mjs",
     "examples/prepare-welsh-review.mjs",
     "examples/welsh-review-cockpit.mjs",
     "examples/compute-pool-demo.mjs",
+    "examples/external-compute-provider-demo.mjs",
     "LICENSE",
     "README.md",
     "SECURITY.md"
@@ -85,7 +87,8 @@
     "openapi:check": "node scripts/validate-openapi.mjs",
     "release:check": "node scripts/check-public-alpha.mjs",
     "security:scan": "node scripts/scan-secrets.mjs",
-    "demo:compute-pool": "node examples/compute-pool-demo.mjs"
+    "demo:compute-pool": "node examples/compute-pool-demo.mjs",
+    "demo:compute-provider": "node examples/external-compute-provider-demo.mjs"
   },
   "dependencies": {
     "pg": "8.16.3"

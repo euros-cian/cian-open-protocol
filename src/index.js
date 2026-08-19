@@ -5,6 +5,10 @@ export {
 } from "./crypto.js";
 export { recognisedCapacity, epochBudget, allocateProRata } from "./allocation.js";
 export { ComputePool, LocalComputeProvider } from "./compute-pool.js";
+export { ComputeCoordinator, createExecutionReceipt } from "./compute-coordinator.js";
+export { InMemoryComputeJobStore, PostgresComputeJobStore } from "./compute-job-store.js";
+export { createComputePoolServer } from "./compute-server.js";
+export { RemoteComputeProviderClient } from "./remote-compute-provider.js";
 export { SettlementRegistry } from "./registry.js";
 export { AgentClient } from "./sdk.js";
 export { createRegistryServer } from "./server.js";

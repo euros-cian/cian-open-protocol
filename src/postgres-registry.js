@@ -10,7 +10,8 @@ const migration = [
   readFileSync(new URL("../database/003-persistent-pilot-sessions.sql", import.meta.url), "utf8"),
   readFileSync(new URL("../database/004-validation-appeals.sql", import.meta.url), "utf8"),
   readFileSync(new URL("../database/005-signed-appeal-resolutions.sql", import.meta.url), "utf8"),
-  readFileSync(new URL("../database/006-tristate-validation.sql", import.meta.url), "utf8")
+  readFileSync(new URL("../database/006-tristate-validation.sql", import.meta.url), "utf8"),
+  readFileSync(new URL("../database/007-compute-pool.sql", import.meta.url), "utf8")
 ].join("\n");
 
 function positiveAmount(amount) {
@@ -232,6 +233,25 @@ export class PostgresSettlementRegistry {
     } catch (error) {
       await client.query("ROLLBACK");
       throw databaseError(error);
+    } finally { client.release(); }
+  }
+
+  async releaseRedemption(redemptionId, failure) {
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      const result = await client.query("SELECT * FROM protocol_redemptions WHERE redemption_id = $1 FOR UPDATE", [redemptionId]);
+      if (!result.rowCount || result.rows[0].status !== "locked") throw new Error("redemption is not locked");
+      const redemption = result.rows[0];
+      await client.query("UPDATE protocol_accounts SET locked = locked - $1 WHERE agent_id = $2 AND series_id = $3", [redemption.amount, redemption.holder_agent, redemption.series_id]);
+      await client.query("UPDATE protocol_redemptions SET status = 'refunded', failure = $1::jsonb WHERE redemption_id = $2", [JSON.stringify(failure), redemptionId]);
+      const record = { redemption_id: redemptionId, series_id: redemption.series_id, amount: safeNumber(redemption.amount, "amount"), status: "refunded", failure };
+      await this.#audit(client, "redemption_refunded", record);
+      await client.query("COMMIT");
+      return record;
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
     } finally { client.release(); }
   }
 

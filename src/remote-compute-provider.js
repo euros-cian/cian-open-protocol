@@ -1,0 +1,10 @@
+// Copyright 2026 Cian AI Ltd. Licensed under Apache-2.0.
+import { createExecutionReceipt } from "./compute-coordinator.js";
+async function json(response){const body=await response.json().catch(()=>({}));if(!response.ok&&response.status!==204)throw new Error(body.error??`compute pool request failed with ${response.status}`);return body;}
+export class RemoteComputeProviderClient{
+  constructor({url,apiToken,signer,resourceClass="local.safe-job.v1",fetchImpl=fetch}={}){if(!url||!apiToken||!signer?.sign)throw new Error("url, API token and signer are required");this.url=url.replace(/\/$/,"");this.apiToken=apiToken;this.signer=signer;this.resourceClass=resourceClass;this.fetch=fetchImpl;}
+  async claim(){const response=await this.fetch(`${this.url}/v0.1/compute/providers/${encodeURIComponent(this.signer.serviceId)}/claim`,{method:"POST",headers:{authorization:`Bearer ${this.apiToken}`}});if(response.status===204)return null;return json(response);}
+  async complete(job,result){const receipt=createExecutionReceipt({signer:this.signer,job,result,resourceClass:this.resourceClass});return json(await this.fetch(`${this.url}/v0.1/compute/providers/${encodeURIComponent(this.signer.serviceId)}/jobs/${encodeURIComponent(job.job_id)}/complete`,{method:"POST",headers:{authorization:`Bearer ${this.apiToken}`,"content-type":"application/json"},body:JSON.stringify({result,receipt})}));}
+  async fail(job,{reasonCode="provider_failure",retryable=true}={}){return json(await this.fetch(`${this.url}/v0.1/compute/providers/${encodeURIComponent(this.signer.serviceId)}/jobs/${encodeURIComponent(job.job_id)}/fail`,{method:"POST",headers:{authorization:`Bearer ${this.apiToken}`,"content-type":"application/json"},body:JSON.stringify({reasonCode,retryable})}));}
+  async runOnce(executor){const job=await this.claim();if(!job)return null;try{const result=await executor(job.workload,job);return await this.complete(job,result);}catch(error){await this.fail(job,{reasonCode:"executor_error",retryable:true});throw error;}}
+}

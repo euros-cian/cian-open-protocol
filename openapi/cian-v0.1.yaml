@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Cian Open Protocol API
-  version: 0.1.0-alpha.19
+  version: 0.1.0-alpha.20
   description: Experimental v0.1 registry, conversation, validation and governance interfaces. Compatibility is not security or production certification.
 servers:
   - url: http://127.0.0.1:8787
@@ -11,6 +11,7 @@ tags:
   - { name: Conversation }
   - { name: Validator }
   - { name: Governance }
+  - { name: Compute }
 paths:
   /health:
     get:
@@ -73,6 +74,48 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
       responses:
         '201': { description: Signed redemption lock, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+  /v0.1/compute/providers/register:
+    post:
+      tags: [Compute]
+      operationId: registerComputeProvider
+      security: [ { computeAdminBearer: [] } ]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [commitment, publicKeyPem, apiToken], properties: { commitment: { $ref: '#/components/schemas/SignedRecord' }, publicKeyPem: { type: string }, apiToken: { type: string, minLength: 32 } } } } } }
+      responses: { '201': { description: Signed capacity commitment registered }, '401': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/jobs:
+    post:
+      tags: [Compute]
+      operationId: queueComputeJob
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [redemption_id, workload], properties: { redemption_id: { type: string }, workload: { type: object } } } } } }
+      responses: { '201': { description: Durable job queued }, '409': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/jobs/{job_id}:
+    get:
+      tags: [Compute]
+      operationId: getComputeJob
+      parameters: [ { name: job_id, in: path, required: true, schema: { type: string } } ]
+      responses: { '200': { description: Public job status without workload content }, '404': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/providers/{provider_id}/claim:
+    post:
+      tags: [Compute]
+      operationId: claimComputeJob
+      security: [ { computeProviderBearer: [] } ]
+      parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } } ]
+      responses: { '200': { description: Leased job including workload }, '204': { description: No compatible job available }, '401': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/providers/{provider_id}/jobs/{job_id}/complete:
+    post:
+      tags: [Compute]
+      operationId: completeComputeJob
+      security: [ { computeProviderBearer: [] } ]
+      parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } }, { name: job_id, in: path, required: true, schema: { type: string } } ]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [result, receipt], properties: { result: { type: object }, receipt: { $ref: '#/components/schemas/SignedRecord' } } } } } }
+      responses: { '200': { description: Job completed and To Bach permanently retired }, '401': { $ref: '#/components/responses/Error' }, '409': { $ref: '#/components/responses/Error' } }
+  /v0.1/compute/providers/{provider_id}/jobs/{job_id}/fail:
+    post:
+      tags: [Compute]
+      operationId: failComputeJob
+      security: [ { computeProviderBearer: [] } ]
+      parameters: [ { name: provider_id, in: path, required: true, schema: { type: string } }, { name: job_id, in: path, required: true, schema: { type: string } } ]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { reasonCode: { type: string }, retryable: { type: boolean } } } } } }
+      responses: { '200': { description: Job requeued or To Bach refunded }, '401': { $ref: '#/components/responses/Error' }, '409': { $ref: '#/components/responses/Error' } }
   /v0.1/sessions:
     post:
       tags: [Conversation]
@@ -138,6 +181,8 @@ paths:
         '409': { $ref: '#/components/responses/Error' }
 components:
   securitySchemes:
+    computeAdminBearer: { type: http, scheme: bearer }
+    computeProviderBearer: { type: http, scheme: bearer }
     sessionBearer: { type: http, scheme: bearer }
     issuerBearer: { type: http, scheme: bearer }
     serviceBearer: { type: http, scheme: bearer }

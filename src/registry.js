@@ -121,6 +121,18 @@ export class SettlementRegistry {
     return record;
   }
 
+  releaseRedemption(redemptionId, failure) {
+    const redemption = this.redemptions.get(redemptionId);
+    if (!redemption || redemption.status !== "locked") throw new Error("redemption is not locked");
+    const account = this.#account(redemption.holder_agent, redemption.series_id);
+    account.locked -= redemption.amount;
+    redemption.status = "refunded";
+    redemption.failure = structuredClone(failure);
+    const record = { redemption_id: redemptionId, series_id: redemption.series_id, amount: redemption.amount, status: "refunded", failure: structuredClone(failure) };
+    this.journal.push({ type: "redemption_refunded", ...record });
+    return record;
+  }
+
   #validateRequest(request, actor, requestId) {
     if (!this.agents.has(actor)) throw new Error("sender is not a credentialed agent");
     if (!this.verifySignature(request)) throw new Error("invalid signature");

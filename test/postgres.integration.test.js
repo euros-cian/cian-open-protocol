@@ -5,9 +5,10 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
-  AgentClient, AppealReviewer, EpochController, InteractionGateway, LanguageProofController,
-  PostgresAppealStore, PostgresPilotSessionStore, PostgresProofStore, PostgresSettlementRegistry, WelshValidator,
-  createRegistryServer, createSigningService, signRecord
+  AgentClient, AppealReviewer, ComputeCoordinator, EpochController, InteractionGateway, LanguageProofController,
+  LocalComputeProvider, PostgresAppealStore, PostgresComputeJobStore, PostgresPilotSessionStore,
+  PostgresProofStore, PostgresSettlementRegistry, WelshValidator, createExecutionReceipt,
+  createRegistryServer, createSigningService, digest, signRecord
 } from "../src/index.js";
 
 const connectionString = process.env.CIAN_TEST_DATABASE_URL;
@@ -18,7 +19,7 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   const registryCredentialsPath = join(directory, "registry.credentials.json");
   const registryPassphrase = "postgres registry test passphrase";
   let state = await PostgresSettlementRegistry.connect({ connectionString, registryId: "registry:postgres-test" });
-  await state.pool.query("TRUNCATE protocol_pilot_sessions, protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
+  await state.pool.query("TRUNCATE protocol_compute_jobs, protocol_compute_commitments, protocol_compute_providers, protocol_pilot_sessions, protocol_epochs, protocol_language_proofs, protocol_attestations, protocol_audit_events, protocol_retirements, protocol_redemptions, protocol_transfers, protocol_consumed_requests, protocol_consumed_proofs, protocol_accounts, protocol_agents RESTART IDENTITY CASCADE");
   let service = createRegistryServer({
     registry: state, registryId: "registry:postgres-test", adminToken,
     registryCredentialsPath, registryPassphrase
@@ -78,6 +79,25 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   });
   assert.equal(restartedA.agentId, agentA.agentId);
   assert.equal((await restartedA.getBalance(seriesId)).balance, 2);
+
+  const computeWorkload = { kind: "sha256", text: "Cyfrifiadura PostgreSQL" };
+  const redemption = await restartedA.redeem({ seriesId, amount: 1, workload: digest(computeWorkload), resourceClasses: ["local.safe-job.v1"] });
+  const providerSigner = createSigningService({ serviceId: "provider:postgres-test" });
+  const provider = new LocalComputeProvider({ signer: providerSigner });
+  const computeStore = new PostgresComputeJobStore({ pool: state.pool });
+  const computeCoordinator = new ComputeCoordinator({ registry: state, store: computeStore });
+  const commitment = provider.createCommitment({ nominalCapacity: 2, availableFrom: new Date(Date.now() - 60_000).toISOString(), availableUntil: new Date(Date.now() + 60_000).toISOString() });
+  await computeCoordinator.registerProvider({ commitment, publicKeyPem: providerSigner.publicKeyPem, apiToken: "postgres-provider-token-32-characters" });
+  await computeCoordinator.enqueue({ redemptionId: redemption.request.redemption_id, workload: computeWorkload });
+  const claimed = await computeCoordinator.claim(providerSigner.serviceId);
+  const computeResult = { kind: "sha256", digest: digest(computeWorkload.text) };
+  const computeReceipt = createExecutionReceipt({ signer: providerSigner, job: claimed, result: computeResult, resourceClass: provider.resourceClass });
+  const completed = await computeCoordinator.complete(providerSigner.serviceId, claimed.job_id, { result: computeResult, receipt: computeReceipt });
+  assert.equal(completed.job.status, "completed");
+  assert.equal(completed.retirement.status, "permanently_retired");
+  assert.deepEqual(await restartedA.getBalance(seriesId), { agent_id: agentA.agentId, series_id: seriesId, balance: 1, locked: 0, sequence: 2 });
+  const computeLedger = await state.ledgerSummary(seriesId);
+  assert.deepEqual({ circulating: computeLedger.circulating_total, retired: computeLedger.retired_total, valid: computeLedger.conservation_valid }, { circulating: 9, retired: 1, valid: true });
 
   const gatewaySigner = createSigningService({ serviceId: "gateway:postgres-test" });
   const validatorSigner = createSigningService({ serviceId: "validator:postgres-test" });
