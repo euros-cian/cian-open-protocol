@@ -17,6 +17,7 @@ export class SettlementRegistry {
     this.consumedProofs = new Set();
     this.redemptions = new Map();
     this.retiredBySeries = new Map();
+    this.issuedBySeries = new Map();
     this.journal = [];
   }
 
@@ -51,6 +52,7 @@ export class SettlementRegistry {
     }
     for (const item of allocations) {
       this.#account(item.recipient_agent_id, seriesId).balance += item.amount;
+      this.issuedBySeries.set(seriesId, (this.issuedBySeries.get(seriesId) ?? 0) + item.amount);
       this.consumedProofs.add(item.proof_id);
     }
     this.journal.push({ type: "allocation", series_id: seriesId, proof_ids: proofIds });
@@ -94,6 +96,15 @@ export class SettlementRegistry {
   redemption(redemptionId) {
     const item = this.redemptions.get(redemptionId);
     return item ? structuredClone(item) : null;
+  }
+
+  ledgerSummary(seriesId) {
+    const accounts = [...this.accounts.entries()].filter(([key]) => key.endsWith(`\u0000${seriesId}`)).map(([key, value]) => ({ agent_id: key.split("\u0000")[0], ...value }));
+    const circulating = accounts.reduce((sum, item) => sum + item.balance, 0);
+    const locked = accounts.reduce((sum, item) => sum + item.locked, 0);
+    const issued = this.issuedBySeries.get(seriesId) ?? 0;
+    const retired = this.retiredBySeries.get(seriesId) ?? 0;
+    return { protocol_version: "0.1", registry_id: this.registryId, series_id: seriesId, issued_total: issued, circulating_total: circulating, spendable_total: circulating - locked, locked_total: locked, retired_total: retired, conservation_valid: issued === circulating + retired, accounts };
   }
 
   retire(redemptionId, executionReceipt) {

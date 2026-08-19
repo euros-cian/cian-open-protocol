@@ -187,6 +187,20 @@ export class PostgresSettlementRegistry {
     return result.rowCount ? { ...result.rows[0].request, status: result.rows[0].status } : null;
   }
 
+  async ledgerSummary(seriesId) {
+    const [issuedResult, accountResult, retiredResult] = await Promise.all([
+      this.pool.query("SELECT COALESCE(sum(amount),0) AS total FROM protocol_consumed_proofs WHERE series_id = $1", [seriesId]),
+      this.pool.query("SELECT agent_id, balance, locked, sequence FROM protocol_accounts WHERE series_id = $1 ORDER BY agent_id", [seriesId]),
+      this.pool.query("SELECT COALESCE(sum(amount),0) AS total FROM protocol_retirements WHERE series_id = $1", [seriesId])
+    ]);
+    const accounts = accountResult.rows.map(row => ({ agent_id: row.agent_id, balance: safeNumber(row.balance, "balance"), locked: safeNumber(row.locked, "locked"), sequence: safeNumber(row.sequence, "sequence") }));
+    const issued = safeNumber(issuedResult.rows[0].total, "issued_total");
+    const retired = safeNumber(retiredResult.rows[0].total, "retired_total");
+    const circulating = accounts.reduce((sum, item) => sum + item.balance, 0);
+    const locked = accounts.reduce((sum, item) => sum + item.locked, 0);
+    return { protocol_version: "0.1", registry_id: this.registryId, series_id: seriesId, issued_total: issued, circulating_total: circulating, spendable_total: circulating - locked, locked_total: locked, retired_total: retired, conservation_valid: issued === circulating + retired, accounts };
+  }
+
   async retire(redemptionId, executionReceipt) {
     const client = await this.pool.connect();
     try {

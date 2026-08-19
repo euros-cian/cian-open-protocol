@@ -90,6 +90,12 @@ export function createRegistryServer({
         return send(response, 200, { agent_id: agentId, series_id: seriesId, ...await state.balance(agentId, seriesId) });
       }
 
+      if (request.method === "GET" && url.pathname === "/v0.1/ledger") {
+        const seriesId = url.searchParams.get("series_id");
+        if (!seriesId) return send(response, 400, { error: "series_id is required", code: "BAD_REQUEST" });
+        return send(response, 200, signer.sign(await state.ledgerSummary(seriesId)));
+      }
+
       if (request.method === "POST" && url.pathname === "/v0.1/admin/allocations") {
         requireAdmin(request, adminToken);
         const allocation = await readJson(request);

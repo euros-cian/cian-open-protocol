@@ -4,6 +4,7 @@ export {
   generateAgentKeys, importPublicKey, signRecord, verifyRecord
 } from "./crypto.js";
 export { recognisedCapacity, epochBudget, allocateProRata } from "./allocation.js";
+export { ComputePool, LocalComputeProvider } from "./compute-pool.js";
 export { SettlementRegistry } from "./registry.js";
 export { AgentClient } from "./sdk.js";
 export { createRegistryServer } from "./server.js";

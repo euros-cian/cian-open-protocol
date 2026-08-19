@@ -37,8 +37,10 @@ export class AgentClient {
   transfer(options:{recipient:string;seriesId:string;amount:number;taskId?:string}):Promise<unknown>;
   redeem(options:{seriesId:string;amount:number;workload:string}):Promise<unknown>;
 }
-export class SettlementRegistry { constructor(options?:Record<string,unknown>); registerAgent(agent:string|AgentManifest):unknown; balance(agentId:string,seriesId:string):Balance }
-export class PostgresSettlementRegistry { readonly pool:PoolLike; static connect(options:{connectionString?:string;pool?:PoolLike;registryId?:string;migrate?:boolean}):Promise<PostgresSettlementRegistry>; close():Promise<void> }
+export class SettlementRegistry { constructor(options?:Record<string,unknown>); registerAgent(agent:string|AgentManifest):unknown; balance(agentId:string,seriesId:string):Balance; ledgerSummary(seriesId:string):Record<string,unknown> }
+export class PostgresSettlementRegistry { readonly pool:PoolLike; static connect(options:{connectionString?:string;pool?:PoolLike;registryId?:string;migrate?:boolean}):Promise<PostgresSettlementRegistry>; close():Promise<void>; ledgerSummary(seriesId:string):Promise<Record<string,unknown>> }
+export class LocalComputeProvider { readonly providerId:string; readonly publicKeyPem:string; readonly resourceClass:string; constructor(options:Record<string,unknown>); createCommitment(options:Record<string,unknown>):SignedRecord; execute(options:Record<string,unknown>):Promise<Record<string,unknown>> }
+export class ComputePool { constructor(options:{registry:SettlementRegistry|PostgresSettlementRegistry;now?:()=>Date}); registerProvider(options:Record<string,unknown>):Record<string,unknown>; commitments():SignedRecord[]; execute(options:{redemptionId:string;workload:Record<string,unknown>}):Promise<Record<string,unknown>> }
 export class WelshValidator { constructor(options:Record<string,unknown>); validate(input:Record<string,unknown>):ValidationAttestation }
 export class WelshValidatorV2 extends WelshValidator {}
 export class RemoteWelshValidator { constructor(options:{url:string;apiToken:string;fetchImpl?:typeof fetch}); validate(input:Record<string,unknown>):Promise<ValidationAttestation> }

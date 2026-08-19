@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Cian Open Protocol API
-  version: 0.1.0-alpha.15
+  version: 0.1.0-alpha.19
   description: Experimental v0.1 registry, conversation, validation and governance interfaces. Compatibility is not security or production certification.
 servers:
   - url: http://127.0.0.1:8787
@@ -49,6 +49,15 @@ paths:
         - { name: series_id, in: query, required: true, schema: { type: string } }
       responses:
         '200': { description: Agent balance, content: { application/json: { schema: { $ref: '#/components/schemas/Balance' } } } }
+  /v0.1/ledger:
+    get:
+      tags: [Registry]
+      operationId: getLedger
+      parameters:
+        - { name: series_id, in: query, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Signed To Bach series ledger with issuance, circulation, locks, retirement and conservation check, content: { application/json: { schema: { $ref: '#/components/schemas/SignedRecord' } } } }
+        '400': { $ref: '#/components/responses/Error' }
   /v0.1/transfers:
     post:
       tags: [Registry]

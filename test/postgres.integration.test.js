@@ -61,6 +61,8 @@ test("PostgreSQL survives restart and serialises conflicting spends", { skip: !c
   assert.deepEqual(responses.map(response => response.status).sort(), [201, 409]);
   assert.equal((await agentA.getBalance(seriesId)).balance, 2);
   assert.equal((await agentB.getBalance(seriesId)).balance, 8);
+  const ledger = await state.ledgerSummary(seriesId);
+  assert.deepEqual({ issued: ledger.issued_total, circulating: ledger.circulating_total, retired: ledger.retired_total, valid: ledger.conservation_valid }, { issued: 10, circulating: 10, retired: 0, valid: true });
 
   await service.close();
   await state.close();
