@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "gate": "external_security_assessment",
+  "reviewer_name": "REPLACE",
+  "reviewer_organisation": "REPLACE",
+  "professional_capacity": "REPLACE",
+  "independence_declaration": "REPLACE",
+  "commit_sha": "REPLACE_WITH_40_HEX_COMMIT",
+  "package_version": "REPLACE",
+  "environment_boundary": "REPLACE",
+  "methodology_or_advice_reference": "REPLACE",
+  "reviewed_at": "REPLACE_WITH_ISO_8601",
+  "conclusion": "not_approved",
+  "unresolved_critical": 0,
+  "unresolved_high": 0,
+  "report_reference": "REPLACE",
+  "signature_reference": "REPLACE"
+}

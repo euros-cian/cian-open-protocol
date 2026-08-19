@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "gate", "reviewer_name", "reviewer_organisation", "professional_capacity", "independence_declaration", "commit_sha", "package_version", "environment_boundary", "methodology_or_advice_reference", "reviewed_at", "conclusion", "report_reference", "signature_reference"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "gate": { "enum": ["external_security_assessment", "production_key_custody", "privacy_and_legal_review"] },
+    "reviewer_name": { "type": "string", "minLength": 2 },
+    "reviewer_organisation": { "type": "string", "minLength": 2 },
+    "professional_capacity": { "type": "string", "minLength": 2 },
+    "independence_declaration": { "type": "string", "minLength": 20 },
+    "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "package_version": { "type": "string", "minLength": 1 },
+    "environment_boundary": { "type": "string", "minLength": 10 },
+    "methodology_or_advice_reference": { "type": "string", "minLength": 2 },
+    "reviewed_at": { "type": "string", "format": "date-time" },
+    "conclusion": { "enum": ["approved", "approved_with_conditions", "not_approved"] },
+    "unresolved_critical": { "type": "integer", "minimum": 0 },
+    "unresolved_high": { "type": "integer", "minimum": 0 },
+    "report_reference": { "type": "string", "minLength": 2 },
+    "signature_reference": { "type": "string", "minLength": 2 }
+  },
+  "additionalProperties": false
+}
