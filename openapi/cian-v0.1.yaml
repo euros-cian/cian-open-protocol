@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Cian Open Protocol API
-  version: 0.1.0-alpha.20
+  version: 0.1.0-alpha.21
   description: Experimental v0.1 registry, conversation, validation and governance interfaces. Compatibility is not security or production certification.
 servers:
   - url: http://127.0.0.1:8787
